@@ -102,7 +102,7 @@ public class AirView implements EntryPoint
                 {
                     public void onFailure(Throwable caught)
                     {
-                        label1.setText("oh no");
+                        label1.setText(caught.getMessage());
                     }
 
                     public void onSuccess(String result)

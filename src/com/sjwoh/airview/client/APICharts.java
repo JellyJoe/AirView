@@ -162,10 +162,10 @@ public class APICharts
             listOfKawasan.add(new String(entry.getKey()));
 
             treeMapOfDateAndAPI.clear();
+            specificDateAPIValues.clear();
             treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>(entry.getValue());
             for(Map.Entry<String, ArrayList<String>> secondEntry : treeMapOfDateAndAPI.entrySet())
             {
-                specificDateAPIValues.clear();
                 tempListOfAPI.clear();
                 if(getDateStatus == false)
                 {
@@ -177,9 +177,13 @@ public class APICharts
 
                 for(int i = 0; i < tempListOfAPI.size(); i++)
                 {
-                    if(!tempListOfAPI.get(i).equals("#"))
+                    if(!tempListOfAPI.get(i).equals("#") && !tempListOfAPI.get(i).equals(""))
                     {
                         averageAPI = averageAPI + Integer.parseInt(tempListOfAPI.get(i).replaceAll("[^0-9]", ""));
+                    }
+                    else
+                    {
+                        averageAPI = averageAPI + Integer.parseInt(tempListOfAPI.get(i).replaceAll("[# ]", "30")); // 30 seems fair
                     }
                 }
 
@@ -199,6 +203,7 @@ public class APICharts
             dataTable.addColumn(ColumnType.NUMBER, listOfKawasan.get(i));
         }
         dataTable.addRows(listOfDates.size());
+
         for(int i = 0; i < listOfDates.size(); i++)
         {
             dataTable.setValue(i, 0, listOfDates.get(i));
@@ -210,6 +215,7 @@ public class APICharts
                 dataTable.setValue(row, col + 1, apiValues.get(col).get(row).intValue());
             }
         }
+
 
         LineChartOptions options = LineChartOptions.create();
         options.setBackgroundColor("#f0f0f0");
