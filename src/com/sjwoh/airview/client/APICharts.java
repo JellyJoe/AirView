@@ -1,10 +1,12 @@
 package com.sjwoh.airview.client;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -220,7 +222,6 @@ public class APICharts
             }
         }
 
-
         LineChartOptions options = LineChartOptions.create();
         options.setBackgroundColor("#f0f0f0");
         options.setFontName("Tahoma");
@@ -233,11 +234,25 @@ public class APICharts
         lineChart.draw(dataTable, options);
     }
 
-    public void updateLineChart(Set<API> setAPI)
+    @SuppressWarnings("deprecation")
+	public void updateLineChart(Set<API> setAPI)
     {
-    	DataTable dataTable = DataTable.create();
-    	dataTable.addColumn(ColumnType.STRING, "Month");
+    	Set<Date> setDate = new TreeSet<Date>();
+    	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
+    	{
+    		API tempAPI = iterator.next();
+    		
+    		Map<Date, Integer> mapTarikhAndValue = tempAPI.getTarikhAndValue();
+    		
+    		for(Map.Entry<Date, Integer> tarikhAndValue : mapTarikhAndValue.entrySet()) {
+    			Date tempDate = Date.valueOf((tarikhAndValue.getKey().getYear() + 1900) + "-" + (tarikhAndValue.getKey().getMonth() + 1 + "-01"));
 
+    			setDate.add(tempDate);
+    		}	
+    	}
+    	
+    	DataTable dataTable = DataTable.create();
+    	dataTable.addColumn(ColumnType.STRING, "Year-Month");
     	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
     	{
     		API tempAPI = iterator.next();
@@ -245,27 +260,42 @@ public class APICharts
     		dataTable.addColumn(ColumnType.NUMBER, tempAPI.getKawasan());
     	}
 
-    	dataTable.addRows(12);
-		for(int month = 1; month < 13; month++) {
-			dataTable.setValue((month - 1), 0, EnumTranslator.getMonth(month));
-		}
+    	dataTable.addRows(setDate.size());
+    	int row = 0;
+    	for(Iterator<Date> iterator = setDate.iterator(); iterator.hasNext(); )
+    	{
+    		Date date = iterator.next();
+    		String yearMonthText = (date.getYear() + 1900) + "-" + EnumTranslator.getMonth(date.getMonth() + 1);
+    		
+    		dataTable.setValue(row, 0, yearMonthText);
+    		
+    		row++;
+    	}
 
 		int col = 1;
     	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
     	{
     		API tempAPI = iterator.next();
 
-    		for(int month = 1; month < 13; month++) {
-    			dataTable.setValue((month - 1), col, tempAPI.getMonthAverage(month));
-    		}
+    		row = 0;
+    		
+        	for(Iterator<Date> iteratorInner = setDate.iterator(); iteratorInner.hasNext(); )
+        	{
+        		Date date = iteratorInner.next();
+
+        		dataTable.setValue(row, col, tempAPI.getAverage((date.getYear() + 1900), (date.getMonth() + 1)));
+        		
+        		row++;
+        	}
+        	
     		col++;
     	}
 
     	LineChartOptions options = LineChartOptions.create();
     	options.setBackgroundColor("#f0f0f0");
     	options.setFontName("Tahoma");
-    	options.setTitle("Monthly Air Pollution Index (API) 2015");
-    	options.setHAxis(HAxis.create("Month"));
+    	options.setTitle("Monthly Air Pollution Index (API) 2014-2015");
+    	options.setHAxis(HAxis.create("Year-Month"));
     	options.setVAxis(VAxis.create("Air Pollution Index (API)"));
 
     	// Draw the chart

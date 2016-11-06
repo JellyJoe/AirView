@@ -1,9 +1,6 @@
 package com.sjwoh.airview.client.entity;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -44,7 +41,21 @@ public class API implements Comparable<API> {
 		int sum = 0;
 		
 		for(Map.Entry<Date, Integer> tarikhAndValue : mTarikhAndValue.entrySet()) {
-			if(tarikhAndValue.getKey().getYear() == year) {
+			if(tarikhAndValue.getKey().getYear() == (year - 1900)) {
+				sum += tarikhAndValue.getValue();
+			}
+		}
+		
+		return sum / counter;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public int getAverage(int year, int month) {
+		int counter = 1;
+		int sum = 0;
+		
+		for(Map.Entry<Date, Integer> tarikhAndValue : mTarikhAndValue.entrySet()) {
+			if(tarikhAndValue.getKey().getYear() == (year - 1900) && tarikhAndValue.getKey().getMonth() == (month - 1)) {
 				sum += tarikhAndValue.getValue();
 			}
 		}

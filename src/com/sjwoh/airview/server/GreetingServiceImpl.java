@@ -40,6 +40,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         {
             url = new URL(completeAPILink + URLEncoder.encode(q, "UTF-8"));
             URLConnection con = url.openConnection();
+            con.setConnectTimeout(60000);
             InputStream is = con.getInputStream();
             Reader in = new InputStreamReader(is, "UTF-8");
 

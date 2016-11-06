@@ -65,11 +65,13 @@ public class AirView implements EntryPoint
         final Button lineChartButton = new Button("Line Chart Button");
         final Button pieChartButton = new Button("Pie Chart Button");
         final Button anotherLineChartButton = new Button("Another Line Chart Button");
+        final Button yetAnotherLineChartButton = new Button("Yet Another Line Chart Button");
 
         leftPanel.add(label1);
         leftPanel.add(lineChartButton);
         leftPanel.add(pieChartButton);
         leftPanel.add(anotherLineChartButton);
+        leftPanel.add(yetAnotherLineChartButton);
 
         mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
         mainPanel.addWest(leftPanel, 100);
@@ -119,6 +121,28 @@ public class AirView implements EntryPoint
         }
         AnotherLineChartHandler anotherLineChartHandler = new AnotherLineChartHandler();
         anotherLineChartButton.addClickHandler(anotherLineChartHandler);
+        
+        class YetAnotherLineChartHandler implements ClickHandler
+        {
+            public void onClick(ClickEvent event)
+            {
+                greetingService.greetServer("Sarawak", new AsyncCallback<String>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        label1.setText(caught.getMessage());
+                    }
+
+                    public void onSuccess(String result)
+                    {
+//                        label1.setText(result);
+                        apiCharts.updateLineChart(parseResultNew(result));
+                    }
+                });
+            }
+        }
+        YetAnotherLineChartHandler yetAnotherLineChartHandler = new YetAnotherLineChartHandler();
+        yetAnotherLineChartButton.addClickHandler(yetAnotherLineChartHandler);
 
         return mainPanel;
     }

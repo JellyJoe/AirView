@@ -23,29 +23,29 @@ public class EnumTranslator {
 	public static String getMonth(int month) {
 		switch(month) {
 			case 1:
-				return "January";
+				return "Jan";
 			case 2:
-				return "February";
+				return "Feb";
 			case 3:
-				return "March";
+				return "Mar";
 			case 4:
-				return "April";
+				return "Apr";
 			case 5:
 				return "May";
 			case 6:
 				return "Jun";
 			case 7:
-				return "July";
+				return "Jul";
 			case 8:
-				return "August";
+				return "Aug";
 			case 9:
-				return "September";
+				return "Sep";
 			case 10:
-				return "October";
+				return "Oct";
 			case 11:
-				return "November";
+				return "Nov";
 			case 12:
-				return "December";
+				return "Dec";
 			default:
 				return "n/A";
 		}
