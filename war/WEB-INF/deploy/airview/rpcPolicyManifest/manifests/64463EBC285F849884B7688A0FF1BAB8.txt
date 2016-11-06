@@ -1,2 +1,0 @@
-serviceClass: com.sjwoh.airview.client.GreetingService
-path: 1D79E1B2C8A646C2CCDAEFA12ACECA76.gwt.rpc

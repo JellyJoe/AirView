@@ -1,3 +1,0 @@
-# Module airview
-# RPC service class, partial path of RPC policy file
-com.sjwoh.airview.client.GreetingService, 1D79E1B2C8A646C2CCDAEFA12ACECA76.gwt.rpc
