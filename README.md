@@ -8,4 +8,4 @@ A web application which provides visualization of real-time and historical data 
 - aqicn Map Web Service - <http://aqicn.org/faq/2015-09-18/map-web-service-real-time-air-quality-tile-api/>
 
 ## Datasets
-- The datasets are obtained from <www.data.gov.my>
+- The datasets are obtained from <http://www.data.gov.my>
