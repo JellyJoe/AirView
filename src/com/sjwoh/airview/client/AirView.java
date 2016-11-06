@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sjwoh.airview.entity.API;
+import com.sjwoh.airview.client.entity.API;
 
 // Entry point classes define <code>onModuleLoad()</code>.
 public class AirView implements EntryPoint
@@ -81,7 +81,21 @@ public class AirView implements EntryPoint
         {
             public void onClick(ClickEvent event)
             {
-                apiCharts.updateLineChart();
+            	label1.setText("clicked");
+                greetingService.greetServer("Malaysia", new AsyncCallback<String>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        label1.setText(caught.getMessage());
+                    }
+
+                    public void onSuccess(String result)
+                    {
+                        label1.setText(result);
+//                        Set<API> test = parseResultNew(result);
+                    	apiCharts.updateLineChart(parseResultNew(result));
+                    }
+                });
             }
         }
         LineChartHandler lineChartHandler = new LineChartHandler();
@@ -124,82 +138,94 @@ public class AirView implements EntryPoint
         return mainPanel;
     }
     
-//    private Set<API> parseResult(String result)
-//    {
-//        JSONValue jsonValue;
-//        JSONObject jsonObject;
-//        JSONArray jsonArray;
-//        JSONString jsonString;
-//        JSONNumber jsonNumber;
-//
-//        jsonValue = JSONParser.parseStrict(result);
-//        jsonObject = jsonValue.isObject();
-//        jsonValue = jsonObject.get("result");
-//        jsonObject = jsonValue.isObject();
-//        jsonValue = jsonObject.get("records");
-//        jsonArray = jsonValue.isArray();
-//        
-//        Set<API> setAPI = new TreeSet<API>();
-//
-//        for(int i = 0; i < jsonArray.size(); i++)
-//        {
-//        	String waktuText;
-//        	int apiValue;
-//        	API api = new API();
-//        	
-//            jsonValue = jsonArray.get(i);
-//            jsonObject = jsonValue.isObject();
-//
-//            jsonValue = jsonObject.get("Kawasan");
-//            jsonString = jsonValue.isString();
-//            api.setKawasan(jsonString.stringValue());
-//
-//            jsonValue = jsonObject.get("Negeri");
-//            jsonString = jsonValue.isString();
-//            api.setNegeri(jsonString.stringValue());
-//
-//            jsonValue = jsonObject.get("Tarikh");
-//            jsonString = jsonValue.isString();
-//            api.setTarikh(jsonString.stringValue().substring(0, 9));
-//            
-//            jsonValue = jsonObject.get("Waktu");
-//            jsonString = jsonValue.isString();
-//            waktuText = jsonString.stringValue().substring(11);
-//
-//            jsonValue = jsonObject.get("API");
-//            jsonNumber = jsonValue.isNumber();
-//            apiValue = (int)jsonNumber.doubleValue();
-//
-//            if(setAPI.isEmpty())
-//            {
-//            	api.addWaktuAndValue(waktuText, apiValue);
-//            	setAPI.add(api);
+    private Set<API> parseResultNew(String result)
+    {
+        JSONValue jsonValue;
+        JSONObject jsonObject;
+        JSONArray jsonArray;
+        JSONString jsonString;
+
+        jsonValue = JSONParser.parseStrict(result);
+        jsonObject = jsonValue.isObject();
+        jsonValue = jsonObject.get("result");
+        jsonObject = jsonValue.isObject();
+        jsonValue = jsonObject.get("records");
+        jsonArray = jsonValue.isArray();
+        
+        Set<API> setAPI = new TreeSet<API>();
+
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+        	String tarikhText;
+        	int apiValue;
+        	API api = new API();
+        	
+            jsonValue = jsonArray.get(i);
+            jsonObject = jsonValue.isObject();
+
+            jsonValue = jsonObject.get("Kawasan");
+            jsonString = jsonValue.isString();
+            api.setKawasan(jsonString.stringValue());
+
+            jsonValue = jsonObject.get("Negeri");
+            jsonString = jsonValue.isString();
+            api.setNegeri(jsonString.stringValue());
+
+            jsonValue = jsonObject.get("Tarikh");
+            jsonString = jsonValue.isString();
+            tarikhText = jsonString.stringValue().substring(0, 9);
+
+            jsonValue = jsonObject.get("API");
+            jsonString = jsonValue.isString();
+//            try {
+//            	apiValue = Integer.parseInt(jsonString.stringValue());
 //            }
-//            else
-//            {
-//            	if(!setAPI.contains(api))
-//            	{
-//                	api.addWaktuAndValue(waktuText, apiValue);
-//                	setAPI.add(api);
-//            	}
-//            	else
-//            	{
-//            		for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext();)
-//            		{
-//            			API tempAPI = iterator.next();
-//            			
-//            			if(tempAPI.equals(api))
-//            			{
-//            				tempAPI.addWaktuAndValue(waktuText, apiValue);
-//            				break;
-//            			}
-//            		}
-//            	}
+//            catch(Exception ex) {
+//            	apiValue = 0;
 //            }
-//        }
-//
-//        return setAPI;
-//    }
+            String extractedDigit = jsonString.stringValue().replaceAll("\\D+", "");
+            if(extractedDigit.equals("")) {
+            	apiValue = 0;
+            }
+            else {
+            	try {
+            		apiValue = Integer.parseInt(extractedDigit);
+	            }
+	            catch(Exception ex) {
+	            	apiValue = 50;
+	            }
+            }
+
+            if(setAPI.isEmpty())
+            {
+            	api.addTarikhAndValue(tarikhText, apiValue);
+            	setAPI.add(api);
+            }
+            else
+            {
+            	if(!setAPI.contains(api))
+            	{
+                	api.addTarikhAndValue(tarikhText, apiValue);
+                	setAPI.add(api);
+            	}
+            	else
+            	{
+            		for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext();)
+            		{
+            			API tempAPI = iterator.next();
+            			
+            			if(tempAPI.equals(api))
+            			{
+            				tempAPI.addTarikhAndValue(tarikhText, apiValue);
+            				break;
+            			}
+            		}
+            	}
+            }
+        }
+
+        return setAPI;
+    }
 
     private TreeMap<String, TreeMap<String, ArrayList<String>>> parseResult(String result)
     {

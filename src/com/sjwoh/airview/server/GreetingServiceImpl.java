@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+
 import com.sjwoh.airview.client.GreetingService;
+import com.sjwoh.airview.client.entity.EnumTranslator;
+import com.sjwoh.airview.client.entity.EnumTranslator.ResourceId;
 import com.sjwoh.airview.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -25,30 +30,33 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
     private String getURLContent(String country)
     {
         // only gets 5 so far
-        final String APILink = "http://www.data.gov.my/data/api/action/datastore_search?resource_id=a864e6cd-759e-4a7e-a672-fa4d3b709e2e&limit=1500";
-        StringBuilder completeAPILink = new StringBuilder();
-        completeAPILink.append(APILink);
-        completeAPILink.append("&q='");
-        completeAPILink.append(country);
-        completeAPILink.append("'");
+        String source = "http://www.data.gov.my/data/api/action/datastore_search_sql?sql=";
+        String query = "SELECT * FROM \"" + EnumTranslator.getResource(ResourceId._2014_2015) + "\" WHERE EXTRACT(YEAR FROM \"Tarikh\") = '2015' LIMIT 10";
+//        completeAPILink.append("&q='");
+//        completeAPILink.append(country);
+//        completeAPILink.append("'");
 
-        final int bufferSize = 1024;
+        final int bufferSize = 4096;
         final char[] buffer = new char[bufferSize];
         final StringBuilder content = new StringBuilder();
         URL url = null;
 
         try
         {
-            url = new URL(completeAPILink.toString());
+            url = new URL(source + URLEncoder.encode(query, "UTF-8"));
         }
         catch(MalformedURLException e)
         {
             e.printStackTrace();
-        }
+        } catch (UnsupportedEncodingException e)
+        {
+			e.printStackTrace();
+		}
 
         try
         {
             URLConnection con = url.openConnection();
+            con.setConnectTimeout(60000);
             InputStream is = con.getInputStream();
             Reader in = new InputStreamReader(is, "UTF-8");
 
