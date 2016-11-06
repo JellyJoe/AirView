@@ -142,9 +142,9 @@ public class APICharts
         LineChartOptions options = LineChartOptions.create();
         options.setBackgroundColor("#f0f0f0");
         options.setFontName("Tahoma");
-        options.setTitle("Monthly Air Pollution Index (API) From 2014");
-        options.setHAxis(HAxis.create("Month"));
-        options.setVAxis(VAxis.create("Air Pollution Index (API)"));
+        options.setTitle("Yearly Coffee Consumption by Country");
+        options.setHAxis(HAxis.create("Year"));
+        options.setVAxis(VAxis.create("Cups"));
 
         // Draw the chart
         getSimpleLayoutPanel().setWidget(getLineChart());
@@ -166,10 +166,10 @@ public class APICharts
             listOfKawasan.add(new String(entry.getKey()));
 
             treeMapOfDateAndAPI.clear();
+            specificDateAPIValues.clear();
             treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>(entry.getValue());
             for(Map.Entry<String, ArrayList<String>> secondEntry : treeMapOfDateAndAPI.entrySet())
             {
-                specificDateAPIValues.clear();
                 tempListOfAPI.clear();
                 if(getDateStatus == false)
                 {
@@ -181,9 +181,13 @@ public class APICharts
 
                 for(int i = 0; i < tempListOfAPI.size(); i++)
                 {
-                    if(!tempListOfAPI.get(i).equals("#"))
+                    if(!tempListOfAPI.get(i).equals("#") && !tempListOfAPI.get(i).equals(""))
                     {
                         averageAPI = averageAPI + Integer.parseInt(tempListOfAPI.get(i).replaceAll("[^0-9]", ""));
+                    }
+                    else
+                    {
+                        averageAPI = averageAPI + Integer.parseInt(tempListOfAPI.get(i).replaceAll("[# ]", "30")); // 30 seems fair
                     }
                 }
 
@@ -203,6 +207,7 @@ public class APICharts
             dataTable.addColumn(ColumnType.NUMBER, listOfKawasan.get(i));
         }
         dataTable.addRows(listOfDates.size());
+
         for(int i = 0; i < listOfDates.size(); i++)
         {
             dataTable.setValue(i, 0, listOfDates.get(i));
@@ -215,6 +220,7 @@ public class APICharts
             }
         }
 
+
         LineChartOptions options = LineChartOptions.create();
         options.setBackgroundColor("#f0f0f0");
         options.setFontName("Tahoma");
@@ -226,29 +232,29 @@ public class APICharts
         getSimpleLayoutPanel().setWidget(getLineChart());
         lineChart.draw(dataTable, options);
     }
-    
+
     public void updateLineChart(Set<API> setAPI)
     {
     	DataTable dataTable = DataTable.create();
     	dataTable.addColumn(ColumnType.STRING, "Month");
-    	
+
     	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
     	{
     		API tempAPI = iterator.next();
-    		
+
     		dataTable.addColumn(ColumnType.NUMBER, tempAPI.getKawasan());
     	}
-    	
+
     	dataTable.addRows(12);
 		for(int month = 1; month < 13; month++) {
 			dataTable.setValue((month - 1), 0, EnumTranslator.getMonth(month));
 		}
-    	
+
 		int col = 1;
     	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
     	{
     		API tempAPI = iterator.next();
-    		
+
     		for(int month = 1; month < 13; month++) {
     			dataTable.setValue((month - 1), col, tempAPI.getMonthAverage(month));
     		}

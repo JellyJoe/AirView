@@ -6,13 +6,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-
 import com.sjwoh.airview.client.GreetingService;
-import com.sjwoh.airview.client.entity.EnumTranslator;
-import com.sjwoh.airview.client.entity.EnumTranslator.ResourceId;
 import com.sjwoh.airview.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -29,34 +26,20 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
 
     private String getURLContent(String country)
     {
-        // only gets 5 so far
-        String source = "http://www.data.gov.my/data/api/action/datastore_search_sql?sql=";
-        String query = "SELECT * FROM \"" + EnumTranslator.getResource(ResourceId._2014_2015) + "\" WHERE EXTRACT(YEAR FROM \"Tarikh\") = '2015' LIMIT 10";
-//        completeAPILink.append("&q='");
-//        completeAPILink.append(country);
-//        completeAPILink.append("'");
+        final String completeAPILink = "http://www.data.gov.my/data/api/action/datastore_search_sql?sql=";
+        final String q = "SELECT \"Tarikh\", \"Negeri\", \"Kawasan\", \"API\" from \"a864e6cd-759e-4a7e-a672-fa4d3b709e2e\" WHERE \"Negeri\" = 'Sarawak'"
+                + " LIMIT 10000";
 
-        final int bufferSize = 4096;
+        final int bufferSize = 8192;
         final char[] buffer = new char[bufferSize];
         final StringBuilder content = new StringBuilder();
+
         URL url = null;
 
         try
         {
-            url = new URL(source + URLEncoder.encode(query, "UTF-8"));
-        }
-        catch(MalformedURLException e)
-        {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e)
-        {
-			e.printStackTrace();
-		}
-
-        try
-        {
+            url = new URL(completeAPILink + URLEncoder.encode(q, "UTF-8"));
             URLConnection con = url.openConnection();
-            con.setConnectTimeout(60000);
             InputStream is = con.getInputStream();
             Reader in = new InputStreamReader(is, "UTF-8");
 
@@ -67,6 +50,14 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                     break;
                 content.append(buffer, 0, numberOfCharacterRead);
             }
+        }
+        catch(MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
         }
         catch(IOException e)
         {
@@ -79,7 +70,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
     /**
      * Escape an html string. Escaping data received from the client helps to
      * prevent cross-site script vulnerabilities.
-     * 
+     *
      * @param html
      *            the html string to escape
      * @return the escaped string
@@ -92,5 +83,4 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
         return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
-
 }
