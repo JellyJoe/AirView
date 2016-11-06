@@ -138,14 +138,90 @@ public class APICharts
         LineChartOptions options = LineChartOptions.create();
         options.setBackgroundColor("#f0f0f0");
         options.setFontName("Tahoma");
-        options.setTitle("Yearly Coffee Consumption by Country");
-        options.setHAxis(HAxis.create("Year"));
-        options.setVAxis(VAxis.create("Cups"));
+        options.setTitle("Monthly Air Pollution Index (API) From 2014");
+        options.setHAxis(HAxis.create("Month"));
+        options.setVAxis(VAxis.create("Air Pollution Index (API)"));
 
         // Draw the chart
         getSimpleLayoutPanel().setWidget(getLineChart());
         lineChart.draw(dataTable, options);
     }
+    
+//    public void updateLineChart(Set<API> setAPI)
+//  {
+//      boolean getDateStatus = false;
+//      ArrayList<String> listOfKawasan = new ArrayList<String>();
+//      ArrayList<String> listOfDates = new ArrayList<String>();
+//      ArrayList<ArrayList<Integer>> apiValues = new ArrayList<ArrayList<Integer>>();
+//      ArrayList<Integer> specificDateAPIValues = new ArrayList<Integer>();
+//      ArrayList<String> tempListOfAPI = new ArrayList<String>();
+//      TreeMap<String, ArrayList<String>> treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>();
+//      int averageAPI = 0;
+//      for(Map.Entry<String, TreeMap<String, ArrayList<String>>> entry : fullTreeMap.entrySet())
+//      {
+//          listOfKawasan.add(new String(entry.getKey()));
+//
+//          treeMapOfDateAndAPI.clear();
+//          treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>(entry.getValue());
+//          for(Map.Entry<String, ArrayList<String>> secondEntry : treeMapOfDateAndAPI.entrySet())
+//          {
+//              specificDateAPIValues.clear();
+//              tempListOfAPI.clear();
+//              if(getDateStatus == false)
+//              {
+//                  listOfDates.add(new String(secondEntry.getKey()));
+//              }
+//
+//              tempListOfAPI = new ArrayList<String>(secondEntry.getValue());
+//              averageAPI = 0;
+//
+//              for(int i = 0; i < tempListOfAPI.size(); i++)
+//              {
+//                  if(!tempListOfAPI.get(i).equals("#"))
+//                  {
+//                      averageAPI = averageAPI + Integer.parseInt(tempListOfAPI.get(i).replaceAll("[^0-9]", ""));
+//                  }
+//              }
+//
+//              averageAPI = averageAPI / tempListOfAPI.size();
+//              specificDateAPIValues.add(new Integer(averageAPI));
+//          }
+//
+//          getDateStatus = true;
+//          apiValues.add(new ArrayList<Integer>(specificDateAPIValues));
+//      }
+//
+//      // prepare the data
+//      DataTable dataTable = DataTable.create();
+//      dataTable.addColumn(ColumnType.STRING, "Date");
+//      for(int i = 0; i < listOfKawasan.size(); i++)
+//      {
+//          dataTable.addColumn(ColumnType.NUMBER, listOfKawasan.get(i));
+//      }
+//      dataTable.addRows(listOfDates.size());
+//      for(int i = 0; i < listOfDates.size(); i++)
+//      {
+//          dataTable.setValue(i, 0, listOfDates.get(i));
+//      }
+//      for(int col = 0; col < apiValues.size(); col++)
+//      {
+//          for(int row = 0; row < apiValues.get(col).size(); row++)
+//          {
+//              dataTable.setValue(row, col + 1, apiValues.get(col).get(row).intValue());
+//          }
+//      }
+//
+//      LineChartOptions options = LineChartOptions.create();
+//      options.setBackgroundColor("#f0f0f0");
+//      options.setFontName("Tahoma");
+//      options.setTitle("SARAWAK");
+//      options.setHAxis(HAxis.create("Date"));
+//      options.setVAxis(VAxis.create("Average API"));
+//
+//      // Draw the chart
+//      getSimpleLayoutPanel().setWidget(getLineChart());
+//      lineChart.draw(dataTable, options);
+//  }
 
     public void updateLineChart(String country, TreeMap<String, TreeMap<String, ArrayList<String>>> fullTreeMap)
     {

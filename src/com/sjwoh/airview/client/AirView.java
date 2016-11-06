@@ -1,7 +1,10 @@
 package com.sjwoh.airview.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -9,6 +12,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
@@ -23,6 +27,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sjwoh.airview.entity.API;
 
 // Entry point classes define <code>onModuleLoad()</code>.
 public class AirView implements EntryPoint
@@ -118,6 +123,83 @@ public class AirView implements EntryPoint
 
         return mainPanel;
     }
+    
+//    private Set<API> parseResult(String result)
+//    {
+//        JSONValue jsonValue;
+//        JSONObject jsonObject;
+//        JSONArray jsonArray;
+//        JSONString jsonString;
+//        JSONNumber jsonNumber;
+//
+//        jsonValue = JSONParser.parseStrict(result);
+//        jsonObject = jsonValue.isObject();
+//        jsonValue = jsonObject.get("result");
+//        jsonObject = jsonValue.isObject();
+//        jsonValue = jsonObject.get("records");
+//        jsonArray = jsonValue.isArray();
+//        
+//        Set<API> setAPI = new TreeSet<API>();
+//
+//        for(int i = 0; i < jsonArray.size(); i++)
+//        {
+//        	String waktuText;
+//        	int apiValue;
+//        	API api = new API();
+//        	
+//            jsonValue = jsonArray.get(i);
+//            jsonObject = jsonValue.isObject();
+//
+//            jsonValue = jsonObject.get("Kawasan");
+//            jsonString = jsonValue.isString();
+//            api.setKawasan(jsonString.stringValue());
+//
+//            jsonValue = jsonObject.get("Negeri");
+//            jsonString = jsonValue.isString();
+//            api.setNegeri(jsonString.stringValue());
+//
+//            jsonValue = jsonObject.get("Tarikh");
+//            jsonString = jsonValue.isString();
+//            api.setTarikh(jsonString.stringValue().substring(0, 9));
+//            
+//            jsonValue = jsonObject.get("Waktu");
+//            jsonString = jsonValue.isString();
+//            waktuText = jsonString.stringValue().substring(11);
+//
+//            jsonValue = jsonObject.get("API");
+//            jsonNumber = jsonValue.isNumber();
+//            apiValue = (int)jsonNumber.doubleValue();
+//
+//            if(setAPI.isEmpty())
+//            {
+//            	api.addWaktuAndValue(waktuText, apiValue);
+//            	setAPI.add(api);
+//            }
+//            else
+//            {
+//            	if(!setAPI.contains(api))
+//            	{
+//                	api.addWaktuAndValue(waktuText, apiValue);
+//                	setAPI.add(api);
+//            	}
+//            	else
+//            	{
+//            		for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext();)
+//            		{
+//            			API tempAPI = iterator.next();
+//            			
+//            			if(tempAPI.equals(api))
+//            			{
+//            				tempAPI.addWaktuAndValue(waktuText, apiValue);
+//            				break;
+//            			}
+//            		}
+//            	}
+//            }
+//        }
+//
+//        return setAPI;
+//    }
 
     private TreeMap<String, TreeMap<String, ArrayList<String>>> parseResult(String result)
     {
@@ -185,5 +267,4 @@ public class AirView implements EntryPoint
 
         return fullTreeMap;
     }
-
 }
