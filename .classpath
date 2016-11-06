@@ -9,6 +9,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Joe/workspace/AirView/src/com/sjwoh/airview/gwt-charts-0.9.10.jar"/>
+	<classpathentry kind="lib" path="D:/Study Place/INTI/Lecture Materials/CSCI318 Software Engineering Practices &amp; Principles/Assignment/Source Codes/AirView/src/com/sjwoh/airview/gwt-charts-0.9.10.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
