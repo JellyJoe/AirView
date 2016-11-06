@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.net.URL;
 import java.net.URLConnection;
 import com.sjwoh.airview.client.GreetingService;
@@ -24,30 +26,19 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
 
     private String getURLContent(String country)
     {
-        // only gets 5 so far
-        final String APILink = "http://www.data.gov.my/data/api/action/datastore_search?resource_id=a864e6cd-759e-4a7e-a672-fa4d3b709e2e&limit=1500";
-        StringBuilder completeAPILink = new StringBuilder();
-        completeAPILink.append(APILink);
-        completeAPILink.append("&q='");
-        completeAPILink.append(country);
-        completeAPILink.append("'");
-
-        final int bufferSize = 1024;
+        final String completeAPILink = "http://www.data.gov.my/data/api/action/datastore_search_sql?sql=";
+        final String q = "SELECT \"Tarikh\", \"Negeri\", \"Kawasan\", \"API\" from \"a864e6cd-759e-4a7e-a672-fa4d3b709e2e\" WHERE \"Negeri\" = 'Sarawak'"
+                + " LIMIT 10000";
+        
+        final int bufferSize = 8192;
         final char[] buffer = new char[bufferSize];
         final StringBuilder content = new StringBuilder();
+        
         URL url = null;
 
         try
         {
-            url = new URL(completeAPILink.toString());
-        }
-        catch(MalformedURLException e)
-        {
-            e.printStackTrace();
-        }
-
-        try
-        {
+            url = new URL(completeAPILink + URLEncoder.encode(q, "UTF-8"));
             URLConnection con = url.openConnection();
             InputStream is = con.getInputStream();
             Reader in = new InputStreamReader(is, "UTF-8");
@@ -59,6 +50,14 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                     break;
                 content.append(buffer, 0, numberOfCharacterRead);
             }
+        }
+        catch(MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
         }
         catch(IOException e)
         {
@@ -84,5 +83,4 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
         return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
-
 }
