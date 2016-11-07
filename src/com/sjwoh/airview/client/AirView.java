@@ -49,10 +49,10 @@ public class AirView implements EntryPoint
     @Override
     public void onModuleLoad()
     {
-        Window.enableScrolling(false);
+        /*Window.enableScrolling(false);
         Window.setMargin("0px");
 
-        RootLayoutPanel.get().add(getMainPanel());
+        RootLayoutPanel.get().add(getMainPanel());*/
     }
 
     public Panel getMainPanel()
