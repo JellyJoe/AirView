@@ -15,3 +15,9 @@ If you face any issue, please refer to the links below:
 
 ## Datasets
 - The datasets are obtained from <http://www.data.gov.my>
+
+## JDoConfig
+If face problem with the JDoConfig.xml file, change the default to this
+<jdoconfig xmlns="http://java.sun.com/xml/ns/jdo/jdoconfig"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdoconfig">
