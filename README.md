@@ -15,3 +15,7 @@ If you face any issue, please refer to the links below:
 
 ## Datasets
 - The datasets are obtained from <http://www.data.gov.my>
+
+## JDoConfig
+- If you face problem with the JDoConfig.xml file, change the default to config provided in this page <http://abhierudite.blogspot.my/2014/07/error-cvc-elt1-cannot-find-declaration.html>
+
