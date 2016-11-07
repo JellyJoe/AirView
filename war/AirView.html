@@ -1,6 +1,5 @@
 <!doctype html>
 
-
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -9,11 +8,7 @@
     <script type="text/javascript" language="javascript" src="airview/airview.nocache.js"></script>
   </head>
   
-
-
   <body>
-  	
-  
     <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
     <noscript>
       <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
@@ -21,57 +16,62 @@
         in order for this application to display correctly.
       </div>
     </noscript>
+    
     <!-- -------------------------------------------------------------------------------------------------- -->
-    
-   
-   
-	
-    
-    
-   
     <div id="sidebar-wrapper">
-     	<img src="image/AirView5.png" alt="AirView logo" width=250 height=300> 	
-		
+     	<img src="image/AirView5.png" alt="AirView logo" width=250 height=300>
     	<ul class="sidebar-nav">
-    		<li data-type="map" ><a href="#">Map View</a><div style="border-bottom:2px dotted #ddd;"></div></li>
-    		<li data-type="bar"><a href="#">Bar Graph View</a></li>
-    		<li data-type="line"><a href="#">Line Graph View</a><div style="border-bottom:2px dotted #ddd;"></div></li>
+    		<li data-type="map" id="map-ctrl">
+    			<a href="#">Map View</a>
+    			<div style="border-bottom:2px dotted #ddd;"></div>
+   			</li>
+    		<li data-type="bar" id="bar-ctrl">
+    			<a href="#">Bar Graph View</a>
+   			</li>
+    		<li data-type="line" id="line-ctrl">
+    			<a href="#">Line Graph View</a>
+    			<div style="border-bottom:2px dotted #ddd;"></div>
+   			</li>
     	</ul>
     	<span id="copyright">Copyright: SJWOH Team</span>
     </div>
     
-    
-    
     <!-- Page Content -->
     <div id='content-wrap'>
-    	<div class="container-fluid">
-	    	<div class="row">
-	    		<div class="col-lg-l2">
-					<script  src="https://maps.googleapis.com/maps/api/js"></script>  
-  
-					<script>  
-					      var  map  =  new  google.maps.Map(document.getElementById('content-wrap'),  {  
-					                  center:  new  google.maps.LatLng(4.2105,  107.9758),  
-					                  mapTypeId:  google.maps.MapTypeId.ROADMAP,  
-					                  zoom:  6  
-					              });  
-					  
-					      var  t  =  new  Date().getTime();  
-					      var  waqiMapOverlay  =  new  google.maps.ImageMapType({  
-					                  getTileUrl:  function(coord,  zoom)  {  
-					                            return  'http://tiles.aqicn.org/tiles/usepa-aqi/'  +  zoom  +  "/"  +  coord.x  +  "/"  +  coord.y  +  ".png?token=_TOKEN_ID_";  
-					                  },  
-					                  name:  "Air  Quality",  
-					        });  
-					  
-					      map.overlayMapTypes.insertAt(0,waqiMapOverlay);  
-					</script>
-
+	    <div id='map' style="height:inherit;">
+	    	<div class="container-fluid">
+		    	<div class="row">
+		    		<div class="col-lg-l2">
+						<script  src="https://maps.googleapis.com/maps/api/js"></script>  
+						<script>  
+						      var map = new google.maps.Map(document.getElementById('map'),
+						      			{
+						                  	center: new google.maps.LatLng(4.2105, 107.9758),
+						                  	mapTypeId: google.maps.MapTypeId.ROADMAP,
+						                  	zoom: 6
+						              	});
+	
+						      var t = new Date().getTime();
+						      var waqiMapOverlay = new google.maps.ImageMapType(
+						      						{
+						                  				getTileUrl: function(coord, zoom)
+						                  				{
+						                            		return 'http://tiles.aqicn.org/tiles/usepa-aqi/' + zoom
+						                            				+ "/" + coord.x + "/" + coord.y + ".png?token=602525d633447e69beae5ddea9209942a5a1f851";
+						                  				},
+						                  				name:  "Air  Quality",
+						        					});
+	
+						      map.overlayMapTypes.insertAt(0,waqiMapOverlay);  
+						</script>
+		    		</div>
 	    		</div>
-	    	</div>
+    		</div>
+	    </div>
+    	<div id="bar-chart" class="row" style="height:663px">
+    	</div>
+    	<div id="line-chart" class="row" style="height:663px">
     	</div>
     </div>
-    
-    
   </body>
 </html>

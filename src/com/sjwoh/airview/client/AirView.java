@@ -27,7 +27,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sjwoh.airview.client.entity.API;
 
@@ -53,6 +55,47 @@ public class AirView implements EntryPoint
         Window.setMargin("0px");
 
         RootLayoutPanel.get().add(getMainPanel());*/
+    	
+    	PushButton pushBtnMap = new PushButton("Map View");
+    	pushBtnMap.setEnabled(true);
+    	pushBtnMap.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("map").setVisible(true);
+				RootPanel.get("bar-chart").setVisible(false);
+				RootPanel.get("line-chart").setVisible(false);
+			}
+    	});
+    	
+    	PushButton pushBtnBar = new PushButton("Bar Graph View");
+    	pushBtnBar.setEnabled(true);
+    	pushBtnBar.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("map").setVisible(false);
+				RootPanel.get("bar-chart").setVisible(true);
+				RootPanel.get("line-chart").setVisible(false);
+			}
+    	});
+    	
+    	PushButton pushBtnLine = new PushButton("Line Graph View");
+    	pushBtnLine.setEnabled(true);
+    	pushBtnLine.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("map").setVisible(false);
+				RootPanel.get("bar-chart").setVisible(false);
+				RootPanel.get("line-chart").setVisible(true);
+			}
+    	});
+    	
+    	Panel mainPanel = getMainPanel();
+    	RootPanel.get("bar-chart").add(mainPanel);
+    	RootPanel.get("bar-chart").setVisible(false);
+    	RootPanel.get("line-chart").setVisible(false);
+    	RootPanel.get("map-ctrl").add(pushBtnMap);
+    	RootPanel.get("bar-ctrl").add(pushBtnBar);
+    	RootPanel.get("line-ctrl").add(pushBtnLine);
     }
 
     public Panel getMainPanel()
@@ -120,7 +163,7 @@ public class AirView implements EntryPoint
         leftPanel.add(yetAnotherLineChartButton);
         leftPanel.add(lineChartAdditionalOptionList);
 
-        mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
+//        mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
         mainPanel.addWest(leftPanel, 150);
         mainPanel.add(apiCharts.getDockLayoutPanel());
 
