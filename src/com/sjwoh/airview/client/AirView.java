@@ -9,6 +9,8 @@ import java.util.TreeSet;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONArray;
@@ -46,11 +48,11 @@ public class AirView implements EntryPoint
     // This is the entry point method.
     @Override
     public void onModuleLoad()
-    {        
-    	/*Window.enableScrolling(false);
+    {
+        Window.enableScrolling(false);
         Window.setMargin("0px");
 
-        RootLayoutPanel.get().add(getMainPanel());*/
+        RootLayoutPanel.get().add(getMainPanel());
     }
 
     public Panel getMainPanel()
@@ -61,53 +63,69 @@ public class AirView implements EntryPoint
         VerticalPanel leftPanel = new VerticalPanel();
         leftPanel.setSize("100%", "100%");
 
-        final Label label1 = new Label("SAMPLE TEXT");
-        label1.setSize("100%", "100%");
+        final Label errorLabel = new Label("Any errors will show up here!");
+        errorLabel.setSize("100%", "100%");
         final Button lineChartButton = new Button("Line Chart Button");
-        final Button pieChartButton = new Button("Pie Chart Button");
-        final Button anotherLineChartButton = new Button("Another Line Chart Button");
         final Button yetAnotherLineChartButton = new Button("Yet Another Line Chart Button");
         
         final ListBox lineChartOptionList = new ListBox();
         lineChartOptionList.addItem("Sarawak");
         lineChartOptionList.addItem("Selangor");
+        lineChartOptionList.addItem("Wilayah Persekutuan");
         lineChartOptionList.setVisibleItemCount(1);
+        
+        // LINE 78 TO 115 DOES NOT DO ANYTHING. JUST SHOWS THAT IT CAN BE CHANGED BASED ON NEGERI SELECTION
+        final String sarawakKawasan[] = {"Kapit", "Miri", "Bintulu", "Kuching", "Sibu"};
+        final String selangorKawasan[] = {"Kuala Selangor", "Shah Alam", "Banting"};
+        final String wilayahPersekutuanKawasan[] = {"Putrajaya", "Labuan"};
+        final ListBox lineChartAdditionalOptionList = new ListBox();
+        for(int i = 0; i < sarawakKawasan.length; i++)
+        {
+            lineChartAdditionalOptionList.addItem(sarawakKawasan[i]);
+        }
+        lineChartAdditionalOptionList.setVisibleItemCount(sarawakKawasan.length);
+        
+        lineChartOptionList.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                
+                int selectedNegeri = lineChartOptionList.getSelectedIndex();
+                lineChartAdditionalOptionList.clear();
+                String[] kawasanList = null;
+                
+                switch(selectedNegeri)
+                {
+                    case 0:
+                        kawasanList = sarawakKawasan;
+                        break;
+                    case 1:
+                        kawasanList = selangorKawasan;
+                        break;
+                    case 2:
+                        kawasanList = wilayahPersekutuanKawasan;
+                        break;
+                }
+                
+                for(int i = 0; i < kawasanList.length; i++)
+                {
+                    lineChartAdditionalOptionList.addItem(kawasanList[i]);
+                }
+                lineChartAdditionalOptionList.setVisibleItemCount(kawasanList.length);
+            }
+        });
 
-        leftPanel.add(label1);
-        leftPanel.add(lineChartButton);
-        leftPanel.add(pieChartButton);
+        leftPanel.add(errorLabel);
         leftPanel.add(lineChartOptionList);
-        leftPanel.add(anotherLineChartButton);
+        leftPanel.add(lineChartButton);
         leftPanel.add(yetAnotherLineChartButton);
+        leftPanel.add(lineChartAdditionalOptionList);
 
         mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
-        mainPanel.addWest(leftPanel, 100);
-        mainPanel.add(apiCharts.getSimpleLayoutPanel());
+        mainPanel.addWest(leftPanel, 150);
+        mainPanel.add(apiCharts.getDockLayoutPanel());
 
         // creates and sets the line chart button handler
         class LineChartHandler implements ClickHandler
-        {
-            public void onClick(ClickEvent event)
-            {
-                apiCharts.updateLineChart();
-            }
-        }
-        LineChartHandler lineChartHandler = new LineChartHandler();
-        lineChartButton.addClickHandler(lineChartHandler);
-
-        // creates and sets the pie chart button handler
-        class PieChartHandler implements ClickHandler
-        {
-            public void onClick(ClickEvent event)
-            {
-                apiCharts.updatePieChart();
-            }
-        }
-        PieChartHandler pieChartHandler = new PieChartHandler();
-        pieChartButton.addClickHandler(pieChartHandler);
-
-        // creates and sets the another line chart button handler
-        class AnotherLineChartHandler implements ClickHandler
         {
             public void onClick(ClickEvent event)
             {
@@ -115,7 +133,7 @@ public class AirView implements EntryPoint
                 {
                     public void onFailure(Throwable caught)
                     {
-                        label1.setText(caught.getMessage());
+                        errorLabel.setText(caught.getMessage());
                     }
 
                     public void onSuccess(String result)
@@ -125,8 +143,8 @@ public class AirView implements EntryPoint
                 });
             }
         }
-        AnotherLineChartHandler anotherLineChartHandler = new AnotherLineChartHandler();
-        anotherLineChartButton.addClickHandler(anotherLineChartHandler);
+        LineChartHandler lineChartHandler = new LineChartHandler();
+        lineChartButton.addClickHandler(lineChartHandler);
         
         class YetAnotherLineChartHandler implements ClickHandler
         {
@@ -136,12 +154,12 @@ public class AirView implements EntryPoint
                 {
                     public void onFailure(Throwable caught)
                     {
-                        label1.setText(caught.getMessage());
+                        errorLabel.setText(caught.getMessage());
                     }
 
                     public void onSuccess(String result)
                     {
-//                        label1.setText(result);
+//                        errorLabel.setText(result);
                         apiCharts.updateLineChart(parseResultNew(result));
                     }
                 });
