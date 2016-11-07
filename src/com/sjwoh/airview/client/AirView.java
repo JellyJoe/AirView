@@ -262,7 +262,7 @@ public class AirView implements EntryPoint
             		apiValue = Integer.parseInt(extractedDigit);
 	            }
 	            catch(Exception ex) {
-	            	apiValue = 50;
+	            	apiValue = 0;
 	            }
             }
 

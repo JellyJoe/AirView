@@ -245,7 +245,7 @@ public class APICharts
     		Map<Date, Integer> mapTarikhAndValue = tempAPI.getTarikhAndValue();
     		
     		for(Map.Entry<Date, Integer> tarikhAndValue : mapTarikhAndValue.entrySet()) {
-    			Date tempDate = Date.valueOf((tarikhAndValue.getKey().getYear() + 1900) + "-" + (tarikhAndValue.getKey().getMonth() + 1 + "-01"));
+    			Date tempDate = Date.valueOf((tarikhAndValue.getKey().getYear() + 1900) + "-" + (tarikhAndValue.getKey().getMonth() + 1) + "-01");
 
     			setDate.add(tempDate);
     		}	
@@ -253,12 +253,6 @@ public class APICharts
     	
     	DataTable dataTable = DataTable.create();
     	dataTable.addColumn(ColumnType.STRING, "Year-Month");
-    	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
-    	{
-    		API tempAPI = iterator.next();
-
-    		dataTable.addColumn(ColumnType.NUMBER, tempAPI.getKawasan());
-    	}
 
     	dataTable.addRows(setDate.size());
     	int row = 0;
@@ -277,13 +271,15 @@ public class APICharts
     	{
     		API tempAPI = iterator.next();
 
+    		dataTable.addColumn(ColumnType.NUMBER, tempAPI.getKawasan());
+
     		row = 0;
     		
         	for(Iterator<Date> iteratorInner = setDate.iterator(); iteratorInner.hasNext(); )
         	{
         		Date date = iteratorInner.next();
 
-        		dataTable.setValue(row, col, tempAPI.getAverage((date.getYear() + 1900), (date.getMonth() + 1)));
+        		dataTable.setValue(row, col, tempAPI.getMonthYearAverage((date.getYear() + 1900), (date.getMonth() + 1)));
         		
         		row++;
         	}
