@@ -5,7 +5,10 @@
 
 
 
-
+body {
+	margin: initial !important;
+	
+}
 img{
 	display: block;
     margin: auto;
@@ -17,7 +20,7 @@ img{
 	z-index: 1;
 	position: relative;
 	width: 20%;
-	height: 620px;
+	height: 663px;
 	overflow-y: hidden;
 	background: #2C3E50;
 	border: 1px #000000;
@@ -36,7 +39,7 @@ img{
 #content-wrap{
 	display: inline-block;
 	width: 80%;
-	height: 620px;
+	height: 663px;
 	position: absolute;
 	
 }
