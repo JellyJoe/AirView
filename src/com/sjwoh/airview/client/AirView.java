@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -66,10 +67,16 @@ public class AirView implements EntryPoint
         final Button pieChartButton = new Button("Pie Chart Button");
         final Button anotherLineChartButton = new Button("Another Line Chart Button");
         final Button yetAnotherLineChartButton = new Button("Yet Another Line Chart Button");
+        
+        final ListBox lineChartOptionList = new ListBox();
+        lineChartOptionList.addItem("Sarawak");
+        lineChartOptionList.addItem("Selangor");
+        lineChartOptionList.setVisibleItemCount(1);
 
         leftPanel.add(label1);
         leftPanel.add(lineChartButton);
         leftPanel.add(pieChartButton);
+        leftPanel.add(lineChartOptionList);
         leftPanel.add(anotherLineChartButton);
         leftPanel.add(yetAnotherLineChartButton);
 
@@ -104,7 +111,7 @@ public class AirView implements EntryPoint
         {
             public void onClick(ClickEvent event)
             {
-                greetingService.greetServer("Sarawak", new AsyncCallback<String>()
+                greetingService.greetServer(lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex()), new AsyncCallback<String>()
                 {
                     public void onFailure(Throwable caught)
                     {
@@ -113,8 +120,7 @@ public class AirView implements EntryPoint
 
                     public void onSuccess(String result)
                     {
-//                        label1.setText(result);
-                        apiCharts.updateLineChart("Sarawak", parseResult(result));
+                        apiCharts.updateLineChart(lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex()), parseResult(result));
                     }
                 });
             }

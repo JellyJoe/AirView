@@ -153,7 +153,7 @@ public class APICharts
         lineChart.draw(dataTable, options);
     }
 
-    public void updateLineChart(String country, TreeMap<String, TreeMap<String, ArrayList<String>>> fullTreeMap)
+    public void updateLineChart(String negeri, TreeMap<String, TreeMap<String, ArrayList<String>>> fullTreeMap)
     {
         boolean getDateStatus = false;
         ArrayList<String> listOfKawasan = new ArrayList<String>();
@@ -189,7 +189,7 @@ public class APICharts
                     }
                     else
                     {
-                        averageAPI = averageAPI + Integer.parseInt(tempListOfAPI.get(i).replaceAll("[# ]", "30")); // 30 seems fair
+                        averageAPI = averageAPI + 30; // 30 would be better than nothing
                     }
                 }
 
@@ -223,9 +223,8 @@ public class APICharts
         }
 
         LineChartOptions options = LineChartOptions.create();
-        options.setBackgroundColor("#f0f0f0");
-        options.setFontName("Tahoma");
-        options.setTitle("SARAWAK");
+        options.setBackgroundColor("#FFFFFF");
+        options.setTitle(negeri);
         options.setHAxis(HAxis.create("Date"));
         options.setVAxis(VAxis.create("Average API"));
 

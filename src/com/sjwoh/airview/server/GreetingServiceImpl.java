@@ -24,11 +24,17 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         return getURLContent(input);
     }
 
-    private String getURLContent(String country)
+    private String getURLContent(String negeri)
     {
-        final String completeAPILink = "http://www.data.gov.my/data/api/action/datastore_search_sql?sql=";
-        final String q = "SELECT \"Tarikh\", \"Negeri\", \"Kawasan\", \"API\" from \"a864e6cd-759e-4a7e-a672-fa4d3b709e2e\" WHERE \"Negeri\" = 'Sarawak'"
-                + " LIMIT 10000";
+        final String apiHost = "http://www.data.gov.my/data/api/action/datastore_search_sql?sql=";
+        final String query = "SELECT \"Tarikh\", \"Negeri\", \"Kawasan\", \"API\" FROM \"a864e6cd-759e-4a7e-a672-fa4d3b709e2e\"";
+        
+        StringBuilder queryCondition = new StringBuilder();
+        queryCondition.append(" WHERE \"Negeri\" = '");
+        queryCondition.append(negeri);
+        queryCondition.append("' ORDER BY \"Tarikh\"");
+        
+        final String queryLimit = " LIMIT 10000";
 
         final int bufferSize = 8192;
         final char[] buffer = new char[bufferSize];
@@ -38,7 +44,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
 
         try
         {
-            url = new URL(completeAPILink + URLEncoder.encode(q, "UTF-8"));
+            url = new URL(apiHost + URLEncoder.encode(query + queryCondition.toString() + queryLimit, "UTF-8"));
             URLConnection con = url.openConnection();
             con.setConnectTimeout(60000);
             InputStream is = con.getInputStream();
