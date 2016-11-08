@@ -36,7 +36,14 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.googlecode.gwt.charts.client.ColumnType;
+import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.corechart.BarChart;
+import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
+import com.googlecode.gwt.charts.client.options.HAxis;
+import com.googlecode.gwt.charts.client.options.VAxis;
 import com.sjwoh.airview.client.entity.API;
 import org.w3c.dom.Element;
 
@@ -103,19 +110,19 @@ public class AirView implements EntryPoint
     {
     	List<String> negeris = new ArrayList<String>();
     	negeris.add("Johor");
-    	negeris.add("Kedah");
-    	negeris.add("Kelantan");
-    	negeris.add("Malacca");
-    	negeris.add("Negeri Sembilan");
-    	negeris.add("Pahang");
-    	negeris.add("Penang");
-    	negeris.add("Perak");
-    	negeris.add("Perlis");
-    	negeris.add("Sabah");
-    	negeris.add("Sarawak");
-    	negeris.add("Selangor");
-    	negeris.add("Terengganu");
-    	negeris.add("Wilayah Persekutuan");
+        negeris.add("Kedah");
+        negeris.add("Kelantan");
+        negeris.add("Melaka");
+        negeris.add("Negeri Sembilan");
+        negeris.add("Pahang");
+        negeris.add("Perak");
+        negeris.add("Perlis");
+        negeris.add("Pulau Pinang");
+        negeris.add("Sabah");
+        negeris.add("Sarawak");
+        negeris.add("Selangor");
+        negeris.add("Terengganu");
+        negeris.add("Wilayah Persekutuan");
     	
     	return negeris;
     }
@@ -174,16 +181,27 @@ public class AirView implements EntryPoint
         }
         
         
-        // LINE 78 TO 115 DOES NOT DO ANYTHING. JUST SHOWS THAT IT CAN BE CHANGED BASED ON NEGERI SELECTION
-        final String sarawakKawasan[] = {"Kapit", "Miri", "Bintulu", "Kuching", "Sibu"};
-        final String selangorKawasan[] = {"Kuala Selangor", "Shah Alam", "Banting"};
-        final String wilayahPersekutuanKawasan[] = {"Putrajaya", "Labuan"};
+        // LINE 178 TO 259 DOES NOT DO ANYTHING. JUST SHOWS THAT KAWASAN CAN BE CHANGED BASED ON NEGERI SELECTION
+        final String kawasanJohor[] = {"Pasir Gudang", "Larkin Lama", "Muar", "Kota Tinggi"};
+        final String kawasanKedah[] = {"Langkawi", "Alor Setar", "Bakar Arang, Sg. Petani"};
+        final String kawasanKelantan[] = {"Tanah Merah ", "SMK Tanjung Chat, Kota Bharu"};
+        final String kawasanMelaka[] = {"Bukit Rambai", "Bandaraya Melaka"};
+        final String kawasanNegeriSembilan[] = {"Nilai", "Seremban", "Port Dickson"};
+        final String kawasanPahang[] = {"Jerantut", "Indera Mahkota, Kuantan", "Balok Baru, Kuantan"};
+        final String kawasanPerak[] = {"Jalan Tasek, Ipoh", "S K Jalan Pegoh, Ipoh", "Kg. Air Putih, Taiping", "Seri Manjung", "Tanjung Malim"};
+        final String kawasanPerlis[] = {"Kangar"};
+        final String kawasanPulauPinang[] = {"USM", "Perai", "Seberang Jaya 2, Perai"};
+        final String kawasanSabah[] = {"Kota Kinabalu", "Tawau", "Keningau", "Sandakan"};
+        final String kawasanSarawak[] = {"Limbang", "Samarahan", "Sri Aman", "Kapit", "Kuching", "Sibu", "Bintulu", "Miri", "ILP Miri", "Sarikei"};
+        final String kawasanSelangor[] = {"Pelabuhan Kelang", "Petaling Jaya", "Banting", "Shah Alam", "Kuala Selangor"};
+        final String kawasanTerengganu[] = {"Kemaman", "Paka", "Kuala Terengganu"};
+        final String kawasanWilayahPersekutuan[] = {"Batu Muda,Kuala Lumpur", "Cheras,Kuala Lumpur", "Putrajaya", "Labuan"};
         final ListBox lineChartAdditionalOptionList = new ListBox();
-        for(int i = 0; i < sarawakKawasan.length; i++)
+        for(int i = 0; i < kawasanJohor.length; i++)
         {
-            lineChartAdditionalOptionList.addItem(sarawakKawasan[i]);
+            lineChartAdditionalOptionList.addItem(kawasanJohor[i]);
         }
-        lineChartAdditionalOptionList.setVisibleItemCount(sarawakKawasan.length);
+        lineChartAdditionalOptionList.setVisibleItemCount(kawasanJohor.length);
         
         lineChartOptionList.addChangeHandler(new ChangeHandler() {
             @Override
@@ -196,13 +214,46 @@ public class AirView implements EntryPoint
                 switch(selectedNegeri)
                 {
                     case 0:
-                        kawasanList = sarawakKawasan;
+                        kawasanList = kawasanJohor;
                         break;
                     case 1:
-                        kawasanList = selangorKawasan;
+                        kawasanList = kawasanKedah;
                         break;
                     case 2:
-                        kawasanList = wilayahPersekutuanKawasan;
+                        kawasanList = kawasanKelantan;
+                        break;
+                    case 3:
+                        kawasanList = kawasanMelaka;
+                        break;
+                    case 4:
+                        kawasanList = kawasanNegeriSembilan;
+                        break;
+                    case 5:
+                        kawasanList = kawasanPahang;
+                        break;
+                    case 6:
+                        kawasanList = kawasanPerak;
+                        break;
+                    case 7:
+                        kawasanList = kawasanPerlis;
+                        break;
+                    case 8:
+                        kawasanList = kawasanPulauPinang;
+                        break;
+                    case 9:
+                        kawasanList = kawasanSabah;
+                        break;
+                    case 10:
+                        kawasanList = kawasanSarawak;
+                        break;
+                    case 11:
+                        kawasanList = kawasanSelangor;
+                        break;
+                    case 12:
+                        kawasanList = kawasanTerengganu;
+                        break;
+                    case 13:
+                        kawasanList = kawasanWilayahPersekutuan;
                         break;
                 }
                 
