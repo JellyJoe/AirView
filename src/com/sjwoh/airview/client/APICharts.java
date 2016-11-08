@@ -57,6 +57,8 @@ public class APICharts
                 getDockLayoutPanel().add(getSimpleLayoutPanel());
             }
         });
+        
+        
     }
 
     public SimpleLayoutPanel getSimpleLayoutPanel()
@@ -70,6 +72,7 @@ public class APICharts
     
     public DockLayoutPanel getDockLayoutPanel()
     {
+    	
         if(dockLayoutPanel == null)
         {
             dockLayoutPanel = new DockLayoutPanel(Unit.PX);

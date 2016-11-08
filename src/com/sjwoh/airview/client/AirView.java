@@ -269,6 +269,8 @@ public class AirView implements EntryPoint
         leftPanel.add(generateLineChartButton);
         //leftPanel.add(lineChartButton);
         //leftPanel.add(lineChartAdditionalOptionList);
+        
+        
 
         //mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
         mainPanel.addWest(leftPanel, 150);
