@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartType;
 import com.sjwoh.airview.client.entity.API;
@@ -43,7 +44,7 @@ public class AirView implements EntryPoint
     // Create a remote service proxy to talk to the server-side Greeting
     // service.
     private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
-    
+
     private boolean chartGenerated = false;
 
     APICharts apiCharts = new APICharts();
@@ -55,7 +56,7 @@ public class AirView implements EntryPoint
         /*Window.enableScrolling(false);
         Window.setMargin("0px");
         RootLayoutPanel.get().add(getMainPanel());*/
-    	
+
     	Panel mainPanel = getMainPanel();
     	RootPanel.get("graph-chart").add(mainPanel);
     	RootPanel.get("map").setVisible(true);
@@ -69,7 +70,7 @@ public class AirView implements EntryPoint
 				RootPanel.get("graph-chart").setVisible(false);
 			}
     	});
-    	
+
     	//Link the preexisting side options to onclickhandler
     	Anchor.wrap(DOM.getElementById("graph-link")).addClickHandler(new ClickHandler() {
 			@Override
@@ -79,7 +80,7 @@ public class AirView implements EntryPoint
 			}
     	});
     }
-    
+
     private List<String> getNegeris()
     {
     	List<String> negeris = new ArrayList<String>();
@@ -97,10 +98,10 @@ public class AirView implements EntryPoint
         negeris.add("Selangor");
         negeris.add("Terengganu");
         negeris.add("Wilayah Persekutuan");
-    	
+
     	return negeris;
     }
-    
+
     private List<String> getYears()
     {
     	List<String> years = new ArrayList<String>();
@@ -115,7 +116,7 @@ public class AirView implements EntryPoint
     	years.add("2013");
     	years.add("2014");
     	years.add("2015");
-    	
+
     	return years;
     }
 
@@ -123,37 +124,37 @@ public class AirView implements EntryPoint
     {
     	final List<String> negeris = getNegeris();
     	final List<String> years = getYears();
-    	
+
         DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
-        mainPanel.setSize("100%", "100%");   
-        
+        mainPanel.setSize("100%", "100%");
+
         VerticalPanel leftPanel = new VerticalPanel();
         leftPanel.setSize("100%", "100%");
         leftPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         leftPanel.getElement().setId("left-panel");
-        
+
         //Graph plotter menu title bar
         final Label lblMenu = new Label("Graph Plotter Menu");
         lblMenu.getElement().setId("graph-menu-txt");
-        
+
         //final Button lineChartButton = new Button("Line Chart Button");
         final Button generateLineChartButton = new Button("Generate");
         generateLineChartButton.getElement().setId("btnLine");
-        
+
         final ListBox lineChartOptionList = new ListBox();
         for(int i = 0; i < negeris.size(); i++)
         {
             lineChartOptionList.addItem(negeris.get(i));
             lineChartOptionList.setVisibleItemCount(1);
         }
-        
+
         final ListBox lineChartYearList = new ListBox();
         for(int i = 0; i < years.size(); i++)
         {
         	lineChartYearList.addItem(years.get(i));
         	lineChartYearList.setVisibleItemCount(1);
         }
-        
+
         final ListBox listBoxChartType = new ListBox();
         listBoxChartType.addItem("Line Chart");
         listBoxChartType.addItem("Bar Chart");
@@ -165,7 +166,7 @@ public class AirView implements EntryPoint
 				{
 					return;
 				}
-				
+
             	if(listBoxChartType.getSelectedIndex() == 0)
             	{
             		apiCharts.updateChart(ChartType.LINE);
@@ -176,7 +177,7 @@ public class AirView implements EntryPoint
             	}
 			}
         });
-        
+
         // LINE 178 TO 259 DOES NOT DO ANYTHING. JUST SHOWS THAT KAWASAN CAN BE CHANGED BASED ON NEGERI SELECTION
         final String kawasanJohor[] = {"Pasir Gudang", "Larkin Lama", "Muar", "Kota Tinggi"};
         final String kawasanKedah[] = {"Langkawi", "Alor Setar", "Bakar Arang, Sg. Petani"};
@@ -198,15 +199,15 @@ public class AirView implements EntryPoint
             lineChartAdditionalOptionList.addItem(kawasanJohor[i]);
         }
         lineChartAdditionalOptionList.setVisibleItemCount(kawasanJohor.length);
-        
+
         lineChartOptionList.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                
+
                 int selectedNegeri = lineChartOptionList.getSelectedIndex();
                 lineChartAdditionalOptionList.clear();
                 String[] kawasanList = null;
-                
+
                 switch(selectedNegeri)
                 {
                     case 0:
@@ -252,7 +253,7 @@ public class AirView implements EntryPoint
                         kawasanList = kawasanWilayahPersekutuan;
                         break;
                 }
-                
+
                 for(int i = 0; i < kawasanList.length; i++)
                 {
                     lineChartAdditionalOptionList.addItem(kawasanList[i]);
@@ -271,7 +272,7 @@ public class AirView implements EntryPoint
 
         //mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
         mainPanel.addWest(leftPanel, 150);
-        mainPanel.add(apiCharts.getDockLayoutPanel()); 
+        mainPanel.add(apiCharts.getDockLayoutPanel());
 
         // creates and sets the line chart button handler
 //        class LineChartHandler implements ClickHandler
@@ -294,14 +295,14 @@ public class AirView implements EntryPoint
 //        }
 //        LineChartHandler lineChartHandler = new LineChartHandler();
 //        lineChartButton.addClickHandler(lineChartHandler);
-        
+
         class LineChartHandler implements ClickHandler
         {
             public void onClick(ClickEvent event)
             {
             	final String negeri = lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex());
             	final String year = lineChartYearList.getItemText(lineChartYearList.getSelectedIndex());
-            	
+
                 greetingService.greetServer(negeri, year, new AsyncCallback<String>()
                 {
                     public void onFailure(Throwable caught)
@@ -320,7 +321,7 @@ public class AirView implements EntryPoint
                     	{
                     		apiCharts.updateChart(ChartType.BAR, negeri, Integer.parseInt(year), parseResultNew(result));
                     	}
-                    	
+
                     	chartGenerated = true;
                     }
                 });
@@ -331,7 +332,7 @@ public class AirView implements EntryPoint
 
         return mainPanel;
     }
-    
+
     /**
      * Draws Custom Dialog box.
      * @return DialogBox
@@ -343,14 +344,14 @@ public class AirView implements EntryPoint
     	// Set caption
     	dialog.setText("Data Fetch Status");
     	dialog.setWidth("300px");
-           
+
         // Setcontent
         Label content = new Label(message);
-    	
+
         if (dialog.isAutoHideEnabled())
         {
         	dialog.setWidget(content);
-    	} 
+    	}
         else {
     	   	VerticalPanel vPanel = new VerticalPanel();
     	   	vPanel.setSpacing(2);
@@ -365,10 +366,10 @@ public class AirView implements EntryPoint
     	   	}));
     	   	dialog.setWidget(vPanel);
     	}
-        
+
     	dialog.setPopupPosition(600, 150);
     	dialog.show();
-    	
+
     	return dialog;
     }
 
@@ -454,7 +455,7 @@ public class AirView implements EntryPoint
 
         return setAPI;
     }
-    
+
 //    private TreeMap<String, TreeMap<String, ArrayList<String>>> parseResult(String result)
 //    {
 //        JSONValue jsonValue;
