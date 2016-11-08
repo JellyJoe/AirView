@@ -29,7 +29,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartType;
 import com.sjwoh.airview.client.entity.API;
@@ -312,14 +311,20 @@ public class AirView implements EntryPoint
 
                     public void onSuccess(String result)
                     {
-                    	//showCustomDialog(result);
+                    	Set<API> setAPI = parseResultNew(result);
+                    	if(setAPI == null)
+                    	{
+                    		showCustomDialog(SERVER_ERROR);
+                    		return;
+                    	}
+                    	
                     	if(listBoxChartType.getSelectedIndex() == 0)
                     	{
-                    		apiCharts.updateChart(ChartType.LINE, negeri, Integer.parseInt(year), parseResultNew(result));
+                    		apiCharts.updateChart(ChartType.LINE, negeri, Integer.parseInt(year), setAPI);
                     	}
                     	else
                     	{
-                    		apiCharts.updateChart(ChartType.BAR, negeri, Integer.parseInt(year), parseResultNew(result));
+                    		apiCharts.updateChart(ChartType.BAR, negeri, Integer.parseInt(year), setAPI);
                     	}
 
                     	chartGenerated = true;
@@ -375,6 +380,11 @@ public class AirView implements EntryPoint
 
     private Set<API> parseResultNew(String result)
     {
+    	if(result.equals(""))
+    	{
+    		return null;
+    	}
+    	
         JSONValue jsonValue;
         JSONObject jsonObject;
         JSONArray jsonArray;

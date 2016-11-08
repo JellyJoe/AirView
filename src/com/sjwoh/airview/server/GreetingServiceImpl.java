@@ -12,7 +12,6 @@ import java.net.URLConnection;
 import com.sjwoh.airview.client.GreetingService;
 import com.sjwoh.airview.client.entity.EnumTranslator;
 import com.sjwoh.airview.client.entity.EnumTranslator.ResourceId;
-import com.sjwoh.airview.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
