@@ -2,6 +2,7 @@ package com.sjwoh.airview.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -38,7 +39,6 @@ import com.sjwoh.airview.client.entity.API;
 // Entry point classes define <code>onModuleLoad()</code>.
 public class AirView implements EntryPoint
 {
-
     // The message displayed to the user when the server cannot be reached or
     // returns an error.
     private static final String SERVER_ERROR = "An error occurred while attempting to contact the server. Please check your network connection and try again.";
@@ -55,7 +55,6 @@ public class AirView implements EntryPoint
     {
         /*Window.enableScrolling(false);
         Window.setMargin("0px");
-
         RootLayoutPanel.get().add(getMainPanel());*/
     	
     	Panel mainPanel = getMainPanel();
@@ -65,7 +64,6 @@ public class AirView implements EntryPoint
 		RootPanel.get("bar-chart").setVisible(false);
 		RootPanel.get("line-chart").setVisible(false);
 
-    	
     	//Link the HTML map-link to onclickhandler
     	Anchor.wrap(DOM.getElementById("map-link")).addClickHandler(new ClickHandler() {
 			@Override
@@ -95,64 +93,52 @@ public class AirView implements EntryPoint
 				RootPanel.get("line-chart").setVisible(true);
 			}
     	});
+    }
+    
+    private List<String> getNegeris()
+    {
+    	List<String> negeris = new ArrayList<String>();
+    	negeris.add("Johor");
+    	negeris.add("Kedah");
+    	negeris.add("Kelantan");
+    	negeris.add("Malacca");
+    	negeris.add("Negeri Sembilan");
+    	negeris.add("Pahang");
+    	negeris.add("Penang");
+    	negeris.add("Perak");
+    	negeris.add("Perlis");
+    	negeris.add("Sabah");
+    	negeris.add("Sarawak");
+    	negeris.add("Selangor");
+    	negeris.add("Terengganu");
+    	negeris.add("Wilayah Persekutuan");
     	
+    	return negeris;
+    }
+    
+    private List<String> getYears()
+    {
+    	List<String> years = new ArrayList<String>();
+    	years.add("2005");
+    	years.add("2006");
+    	years.add("2007");
+    	years.add("2008");
+    	years.add("2009");
+//    	years.add("2010");
+//    	years.add("2011");
+//    	years.add("2012");
+    	years.add("2013");
+    	years.add("2014");
+    	years.add("2015");
     	
-    	
-    	/*
-    	PushButton pushBtnMap = new PushButton("Map View");
-    	pushBtnMap.setEnabled(true);
-    	pushBtnMap.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				RootPanel.get("map").setVisible(true);
-				RootPanel.get("bar-chart").setVisible(false);
-				RootPanel.get("line-chart").setVisible(false);
-			}
-    	});
-    	
-    	*/
-    	
-    	/*
-    	
-    	PushButton pushBtnBar = new PushButton("Bar Graph View");
-    	pushBtnBar.setEnabled(true);
-    	pushBtnBar.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				RootPanel.get("map").setVisible(false);
-				RootPanel.get("bar-chart").setVisible(true);
-				RootPanel.get("line-chart").setVisible(false);
-			}
-    	});
-    	
-    	*/
-    	
-    	
-    	/*
-    	
-    	
-    	PushButton pushBtnLine = new PushButton("Line Graph View");
-    	pushBtnLine.setEnabled(true);
-    	
-    	pushBtnLine.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				RootPanel.get("map").setVisible(false);
-				RootPanel.get("bar-chart").setVisible(false);
-				RootPanel.get("line-chart").setVisible(true);
-			}
-    	});
-    */
-    	
-    	
-    	//RootPanel.get("map-ctrl").add(pushBtnMap);
-    	//RootPanel.get("bar-ctrl").add(pushBtnBar);
-    	//RootPanel.get("line-ctrl").add(pushBtnLine);
-    	
+    	return years;
     }
 
     public Panel getMainPanel()
     {
+    	final List<String> negeris = getNegeris();
+    	final List<String> years = getYears();
+    	
         DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
         mainPanel.setSize("100%", "100%");
 
@@ -161,14 +147,22 @@ public class AirView implements EntryPoint
 
         final Label errorLabel = new Label("Any errors will show up here!");
         errorLabel.setSize("100%", "100%");
-        final Button lineChartButton = new Button("Line Chart Button");
-        final Button yetAnotherLineChartButton = new Button("Yet Another Line Chart Button");
+//        final Button lineChartButton = new Button("Line Chart Button");
+        final Button generateLineChartButton = new Button("Generate");
         
         final ListBox lineChartOptionList = new ListBox();
-        lineChartOptionList.addItem("Sarawak");
-        lineChartOptionList.addItem("Selangor");
-        lineChartOptionList.addItem("Wilayah Persekutuan");
-        lineChartOptionList.setVisibleItemCount(1);
+        for(int i = 0; i < negeris.size(); i++)
+        {
+            lineChartOptionList.addItem(negeris.get(i));
+            lineChartOptionList.setVisibleItemCount(1);
+        }
+        
+        final ListBox lineChartYearList = new ListBox();
+        for(int i = 0; i < years.size(); i++)
+        {
+        	lineChartYearList.addItem(years.get(i));
+        	lineChartYearList.setVisibleItemCount(1);
+        }
         
         // LINE 78 TO 115 DOES NOT DO ANYTHING. JUST SHOWS THAT IT CAN BE CHANGED BASED ON NEGERI SELECTION
         final String sarawakKawasan[] = {"Kapit", "Miri", "Bintulu", "Kuching", "Sibu"};
@@ -212,8 +206,9 @@ public class AirView implements EntryPoint
 
         leftPanel.add(errorLabel);
         leftPanel.add(lineChartOptionList);
-        leftPanel.add(lineChartButton);
-        leftPanel.add(yetAnotherLineChartButton);
+        leftPanel.add(lineChartYearList);
+//        leftPanel.add(lineChartButton);
+        leftPanel.add(generateLineChartButton);
         leftPanel.add(lineChartAdditionalOptionList);
 
 //        mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
@@ -221,11 +216,35 @@ public class AirView implements EntryPoint
         mainPanel.add(apiCharts.getDockLayoutPanel());
 
         // creates and sets the line chart button handler
+//        class LineChartHandler implements ClickHandler
+//        {
+//            public void onClick(ClickEvent event)
+//            {
+//                greetingService.greetServer(lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex()), new AsyncCallback<String>()
+//                {
+//                    public void onFailure(Throwable caught)
+//                    {
+//                        errorLabel.setText(caught.getMessage());
+//                    }
+//
+//                    public void onSuccess(String result)
+//                    {
+//                        apiCharts.updateLineChart(lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex()), parseResult(result));
+//                    }
+//                });
+//            }
+//        }
+//        LineChartHandler lineChartHandler = new LineChartHandler();
+//        lineChartButton.addClickHandler(lineChartHandler);
+        
         class LineChartHandler implements ClickHandler
         {
             public void onClick(ClickEvent event)
             {
-                greetingService.greetServer(lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex()), new AsyncCallback<String>()
+            	final String negeri = lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex());
+            	final String year = lineChartYearList.getItemText(lineChartYearList.getSelectedIndex());
+            	
+                greetingService.greetServer(negeri, year, new AsyncCallback<String>()
                 {
                     public void onFailure(Throwable caught)
                     {
@@ -234,104 +253,16 @@ public class AirView implements EntryPoint
 
                     public void onSuccess(String result)
                     {
-                        apiCharts.updateLineChart(lineChartOptionList.getItemText(lineChartOptionList.getSelectedIndex()), parseResult(result));
+                    	errorLabel.setText(result);
+                        apiCharts.updateLineChart(negeri, Integer.parseInt(year), parseResultNew(result));
                     }
                 });
             }
         }
         LineChartHandler lineChartHandler = new LineChartHandler();
-        lineChartButton.addClickHandler(lineChartHandler);
-        
-        class YetAnotherLineChartHandler implements ClickHandler
-        {
-            public void onClick(ClickEvent event)
-            {
-                greetingService.greetServer("Sarawak", new AsyncCallback<String>()
-                {
-                    public void onFailure(Throwable caught)
-                    {
-                        errorLabel.setText(caught.getMessage());
-                    }
-
-                    public void onSuccess(String result)
-                    {
-//                        errorLabel.setText(result);
-                        apiCharts.updateLineChart(parseResultNew(result));
-                    }
-                });
-            }
-        }
-        YetAnotherLineChartHandler yetAnotherLineChartHandler = new YetAnotherLineChartHandler();
-        yetAnotherLineChartButton.addClickHandler(yetAnotherLineChartHandler);
+        generateLineChartButton.addClickHandler(lineChartHandler);
 
         return mainPanel;
-    }
-
-    private TreeMap<String, TreeMap<String, ArrayList<String>>> parseResult(String result)
-    {
-        JSONValue jsonValue;
-        JSONObject jsonObject;
-        JSONArray jsonArray;
-        JSONString jsonString;
-        String kawasan, negeri, tarikh, api;
-
-        ArrayList<String> arrayOfAPI = new ArrayList<String>();
-        TreeMap<String, ArrayList<String>> treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>();
-        TreeMap<String, TreeMap<String, ArrayList<String>>> fullTreeMap = new TreeMap<String, TreeMap<String, ArrayList<String>>>();
-
-        jsonValue = JSONParser.parseStrict(result);
-        jsonObject = jsonValue.isObject();
-        jsonValue = jsonObject.get("result");
-        jsonObject = jsonValue.isObject();
-        jsonValue = jsonObject.get("records");
-        jsonArray = jsonValue.isArray();
-
-        for(int i = 0; i < jsonArray.size(); i++)
-        {
-            jsonValue = jsonArray.get(i);
-            jsonObject = jsonValue.isObject();
-
-            jsonValue = jsonObject.get("Kawasan");
-            jsonString = jsonValue.isString();
-            kawasan = jsonString.stringValue();
-
-            jsonValue = jsonObject.get("Negeri");
-            jsonString = jsonValue.isString();
-            negeri = jsonString.stringValue();
-
-            jsonValue = jsonObject.get("Tarikh");
-            jsonString = jsonValue.isString();
-            tarikh = jsonString.stringValue().substring(0, 7);
-
-            jsonValue = jsonObject.get("API");
-            jsonString = jsonValue.isString();
-            api = jsonString.stringValue();
-
-            arrayOfAPI.clear();
-            treeMapOfDateAndAPI.clear();
-
-            if(fullTreeMap.isEmpty() || !fullTreeMap.containsKey(kawasan))
-            {
-                arrayOfAPI.add(api);
-                treeMapOfDateAndAPI.put(tarikh, new ArrayList<String>(arrayOfAPI));
-                fullTreeMap.put(kawasan, new TreeMap<String, ArrayList<String>>(treeMapOfDateAndAPI));
-            }
-            else
-            {
-                treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>(fullTreeMap.get(kawasan));
-
-                if(treeMapOfDateAndAPI.containsKey(tarikh))
-                {
-                    arrayOfAPI = new ArrayList<String>(treeMapOfDateAndAPI.get(tarikh));
-                }
-
-                arrayOfAPI.add(api);
-                treeMapOfDateAndAPI.put(tarikh, new ArrayList<String>(arrayOfAPI));
-                fullTreeMap.put(kawasan, new TreeMap<String, ArrayList<String>>(treeMapOfDateAndAPI));
-            }
-        }
-
-        return fullTreeMap;
     }
 
     private Set<API> parseResultNew(String result)
@@ -416,4 +347,71 @@ public class AirView implements EntryPoint
 
         return setAPI;
     }
+    
+//    private TreeMap<String, TreeMap<String, ArrayList<String>>> parseResult(String result)
+//    {
+//        JSONValue jsonValue;
+//        JSONObject jsonObject;
+//        JSONArray jsonArray;
+//        JSONString jsonString;
+//        String kawasan, negeri, tarikh, api;
+//
+//        ArrayList<String> arrayOfAPI = new ArrayList<String>();
+//        TreeMap<String, ArrayList<String>> treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>();
+//        TreeMap<String, TreeMap<String, ArrayList<String>>> fullTreeMap = new TreeMap<String, TreeMap<String, ArrayList<String>>>();
+//
+//        jsonValue = JSONParser.parseStrict(result);
+//        jsonObject = jsonValue.isObject();
+//        jsonValue = jsonObject.get("result");
+//        jsonObject = jsonValue.isObject();
+//        jsonValue = jsonObject.get("records");
+//        jsonArray = jsonValue.isArray();
+//
+//        for(int i = 0; i < jsonArray.size(); i++)
+//        {
+//            jsonValue = jsonArray.get(i);
+//            jsonObject = jsonValue.isObject();
+//
+//            jsonValue = jsonObject.get("Kawasan");
+//            jsonString = jsonValue.isString();
+//            kawasan = jsonString.stringValue();
+//
+//            jsonValue = jsonObject.get("Negeri");
+//            jsonString = jsonValue.isString();
+//            negeri = jsonString.stringValue();
+//
+//            jsonValue = jsonObject.get("Tarikh");
+//            jsonString = jsonValue.isString();
+//            tarikh = jsonString.stringValue().substring(0, 7);
+//
+//            jsonValue = jsonObject.get("API");
+//            jsonString = jsonValue.isString();
+//            api = jsonString.stringValue();
+//
+//            arrayOfAPI.clear();
+//            treeMapOfDateAndAPI.clear();
+//
+//            if(fullTreeMap.isEmpty() || !fullTreeMap.containsKey(kawasan))
+//            {
+//                arrayOfAPI.add(api);
+//                treeMapOfDateAndAPI.put(tarikh, new ArrayList<String>(arrayOfAPI));
+//                fullTreeMap.put(kawasan, new TreeMap<String, ArrayList<String>>(treeMapOfDateAndAPI));
+//            }
+//            else
+//            {
+//                treeMapOfDateAndAPI = new TreeMap<String, ArrayList<String>>(fullTreeMap.get(kawasan));
+//
+//                if(treeMapOfDateAndAPI.containsKey(tarikh))
+//                {
+//                    arrayOfAPI = new ArrayList<String>(treeMapOfDateAndAPI.get(tarikh));
+//                }
+//
+//                arrayOfAPI.add(api);
+//                treeMapOfDateAndAPI.put(tarikh, new ArrayList<String>(arrayOfAPI));
+//                fullTreeMap.put(kawasan, new TreeMap<String, ArrayList<String>>(treeMapOfDateAndAPI));
+//            }
+//        }
+//
+//        return fullTreeMap;
+//    }
 }
