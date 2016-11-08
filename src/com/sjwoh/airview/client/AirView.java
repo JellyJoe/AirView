@@ -18,8 +18,10 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -56,6 +58,47 @@ public class AirView implements EntryPoint
 
         RootLayoutPanel.get().add(getMainPanel());*/
     	
+    	Panel mainPanel = getMainPanel();
+    	RootPanel.get("bar-chart").add(mainPanel);
+    	RootPanel.get("line-chart").add(mainPanel);
+    	RootPanel.get("map").setVisible(true);
+		RootPanel.get("bar-chart").setVisible(false);
+		RootPanel.get("line-chart").setVisible(false);
+
+    	
+    	//Link the HTML map-link to onclickhandler
+    	Anchor.wrap(DOM.getElementById("map-link")).addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("map").setVisible(true);
+				RootPanel.get("bar-chart").setVisible(false);
+				RootPanel.get("line-chart").setVisible(false);
+			}
+    	});
+    	
+    	//Link the HTML bar-link to onclickhandler
+    	Anchor.wrap(DOM.getElementById("bar-link")).addClickHandler(new ClickHandler() {
+    		@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("map").setVisible(false);
+				RootPanel.get("bar-chart").setVisible(true);
+				RootPanel.get("line-chart").setVisible(false);
+			}
+    	});
+    	
+    	//Link the preexisting side options to onclickhandler
+    	Anchor.wrap(DOM.getElementById("line-link")).addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("map").setVisible(false);
+				RootPanel.get("bar-chart").setVisible(false);
+				RootPanel.get("line-chart").setVisible(true);
+			}
+    	});
+    	
+    	
+    	
+    	/*
     	PushButton pushBtnMap = new PushButton("Map View");
     	pushBtnMap.setEnabled(true);
     	pushBtnMap.addClickHandler(new ClickHandler() {
@@ -66,6 +109,10 @@ public class AirView implements EntryPoint
 				RootPanel.get("line-chart").setVisible(false);
 			}
     	});
+    	
+    	*/
+    	
+    	/*
     	
     	PushButton pushBtnBar = new PushButton("Bar Graph View");
     	pushBtnBar.setEnabled(true);
@@ -78,8 +125,15 @@ public class AirView implements EntryPoint
 			}
     	});
     	
+    	*/
+    	
+    	
+    	/*
+    	
+    	
     	PushButton pushBtnLine = new PushButton("Line Graph View");
     	pushBtnLine.setEnabled(true);
+    	
     	pushBtnLine.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -88,14 +142,13 @@ public class AirView implements EntryPoint
 				RootPanel.get("line-chart").setVisible(true);
 			}
     	});
+    */
     	
-    	Panel mainPanel = getMainPanel();
-    	RootPanel.get("bar-chart").add(mainPanel);
-    	RootPanel.get("bar-chart").setVisible(false);
-    	RootPanel.get("line-chart").setVisible(false);
-    	RootPanel.get("map-ctrl").add(pushBtnMap);
-    	RootPanel.get("bar-ctrl").add(pushBtnBar);
-    	RootPanel.get("line-ctrl").add(pushBtnLine);
+    	
+    	//RootPanel.get("map-ctrl").add(pushBtnMap);
+    	//RootPanel.get("bar-ctrl").add(pushBtnBar);
+    	//RootPanel.get("line-ctrl").add(pushBtnLine);
+    	
     }
 
     public Panel getMainPanel()
