@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartLoader;
@@ -24,9 +22,8 @@ import com.googlecode.gwt.charts.client.controls.filter.CategoryFilter;
 import com.googlecode.gwt.charts.client.controls.filter.CategoryFilterOptions;
 import com.googlecode.gwt.charts.client.controls.filter.CategoryFilterState;
 import com.googlecode.gwt.charts.client.controls.filter.CategoryFilterUi;
-import com.googlecode.gwt.charts.client.corechart.LineChart;
+import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
 import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
-import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.SelectedValuesLayout;
 import com.googlecode.gwt.charts.client.options.VAxis;
@@ -37,10 +34,14 @@ public class APICharts
 {
     private SimpleLayoutPanel layoutPanel;
     private DockLayoutPanel dockLayoutPanel;
-    private LineChart lineChart;
     private Dashboard dashboard;
     private ChartWrapper<LineChartOptions> lineChartWrapper;
+    private ChartWrapper<BarChartOptions> barChartWrapper;
     private CategoryFilter categoryFilter;
+    private DataTable dataTable;
+    private String title;
+    private final String hAxis = "Year-Month";
+    private final String vAxis = "Air Pollution Index (API)";
 
     public APICharts()
     {
@@ -75,15 +76,6 @@ public class APICharts
         }
         return dockLayoutPanel;
     }
-
-    public Widget getLineChart()
-    {
-        if(lineChart == null)
-        {
-            lineChart = new LineChart();
-        }
-        return lineChart;
-    }
     
     public Dashboard getDashboard()
     {
@@ -104,6 +96,16 @@ public class APICharts
         return lineChartWrapper;
     }
     
+    private ChartWrapper<BarChartOptions> getBarChartWrapper()
+    {
+        if (barChartWrapper == null)
+        {
+        	barChartWrapper = new ChartWrapper<BarChartOptions>();
+        	barChartWrapper.setChartType(ChartType.BAR);
+        }
+        return barChartWrapper;
+    }
+    
     private CategoryFilter getCategoryFilter()
     {
         if (categoryFilter == null)
@@ -113,10 +115,24 @@ public class APICharts
         }
         return categoryFilter;
     }
+    
+	public void updateChart(ChartType chartType)
+    {
+    	switch (chartType)
+    	{
+	    	case BAR:
+	    		drawBarChart();
+	    		break;
+    		default:
+    			drawLineChart();
+    			break;
+    	}
+    }
 
     @SuppressWarnings("deprecation")
-	public void updateLineChart(String negeri, int year, Set<API> setAPI)
+	public void updateChart(ChartType chartType, String negeri, int year, Set<API> setAPI)
     {
+    	title = negeri;
     	Set<Date> setDate = new TreeSet<Date>();
     	for(Iterator<API> iterator = setAPI.iterator(); iterator.hasNext(); )
     	{
@@ -144,7 +160,7 @@ public class APICharts
         categoryFilterOptions.setUi(categoryFilterUi);
         categoryFilter.setOptions(categoryFilterOptions);
     	
-    	DataTable dataTable = DataTable.create();
+    	dataTable = DataTable.create();
     	dataTable.addColumn(ColumnType.STRING, "Year-Month");
 
     	dataTable.addRows(setDate.size());
@@ -185,16 +201,44 @@ public class APICharts
     		col++;
     	}
     	
+    	switch (chartType)
+    	{
+	    	case BAR:
+	    		drawBarChart();
+	    		break;
+    		default:
+    			drawLineChart();
+    			break;
+    	}
+    }
+    
+    private void drawLineChart()
+    {
     	getSimpleLayoutPanel().setWidget(getLineChartWrapper());
 
     	LineChartOptions options = LineChartOptions.create();
     	options.setBackgroundColor("#FFFFFF");
-    	options.setTitle(negeri);
-    	options.setTitle("Monthly Air Pollution Index (API) 2014-2015");
-    	options.setHAxis(HAxis.create("Year-Month"));
-    	options.setVAxis(VAxis.create("Air Pollution Index (API)"));
+    	options.setTitle(title);
+    	options.setHAxis(HAxis.create(hAxis));
+    	options.setVAxis(VAxis.create(vAxis));
+    	lineChartWrapper.setOptions(options);
 
     	dashboard.bind(categoryFilter, lineChartWrapper);
+        dashboard.draw(dataTable);
+    }
+    
+    private void drawBarChart()
+    {
+    	getSimpleLayoutPanel().setWidget(getBarChartWrapper());
+
+    	BarChartOptions options = BarChartOptions.create();
+    	options.setBackgroundColor("#FFFFFF");
+    	options.setTitle(title);
+    	options.setHAxis(HAxis.create(vAxis));
+    	options.setVAxis(VAxis.create(hAxis));
+    	barChartWrapper.setOptions(options);
+
+    	dashboard.bind(categoryFilter, barChartWrapper);
         dashboard.draw(dataTable);
     }
     

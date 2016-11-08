@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -20,25 +19,19 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.googlecode.gwt.charts.client.ChartType;
 import com.sjwoh.airview.client.entity.API;
-import org.w3c.dom.Element;
 
 // Entry point classes define <code>onModuleLoad()</code>.
 public class AirView implements EntryPoint
@@ -50,6 +43,8 @@ public class AirView implements EntryPoint
     // Create a remote service proxy to talk to the server-side Greeting
     // service.
     private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+    
+    private boolean chartGenerated = false;
 
     APICharts apiCharts = new APICharts();
 
@@ -62,39 +57,25 @@ public class AirView implements EntryPoint
         RootLayoutPanel.get().add(getMainPanel());*/
     	
     	Panel mainPanel = getMainPanel();
-    	RootPanel.get("bar-chart").add(mainPanel);
-    	RootPanel.get("line-chart").add(mainPanel);
+    	RootPanel.get("graph-chart").add(mainPanel);
     	RootPanel.get("map").setVisible(true);
-		RootPanel.get("bar-chart").setVisible(false);
-		RootPanel.get("line-chart").setVisible(false);
+		RootPanel.get("graph-chart").setVisible(false);
 
     	//Link the HTML map-link to onclickhandler
     	Anchor.wrap(DOM.getElementById("map-link")).addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				RootPanel.get("map").setVisible(true);
-				RootPanel.get("bar-chart").setVisible(false);
-				RootPanel.get("line-chart").setVisible(false);
-			}
-    	});
-    	
-    	//Link the HTML bar-link to onclickhandler
-    	Anchor.wrap(DOM.getElementById("bar-link")).addClickHandler(new ClickHandler() {
-    		@Override
-			public void onClick(ClickEvent event) {
-				RootPanel.get("map").setVisible(false);
-				RootPanel.get("bar-chart").setVisible(true);
-				RootPanel.get("line-chart").setVisible(false);
+				RootPanel.get("graph-chart").setVisible(false);
 			}
     	});
     	
     	//Link the preexisting side options to onclickhandler
-    	Anchor.wrap(DOM.getElementById("line-link")).addClickHandler(new ClickHandler() {
+    	Anchor.wrap(DOM.getElementById("graph-link")).addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				RootPanel.get("map").setVisible(false);
-				RootPanel.get("bar-chart").setVisible(false);
-				RootPanel.get("line-chart").setVisible(true);
+				RootPanel.get("graph-chart").setVisible(true);
 			}
     	});
     }
@@ -103,19 +84,19 @@ public class AirView implements EntryPoint
     {
     	List<String> negeris = new ArrayList<String>();
     	negeris.add("Johor");
-    	negeris.add("Kedah");
-    	negeris.add("Kelantan");
-    	negeris.add("Malacca");
-    	negeris.add("Negeri Sembilan");
-    	negeris.add("Pahang");
-    	negeris.add("Penang");
-    	negeris.add("Perak");
-    	negeris.add("Perlis");
-    	negeris.add("Sabah");
-    	negeris.add("Sarawak");
-    	negeris.add("Selangor");
-    	negeris.add("Terengganu");
-    	negeris.add("Wilayah Persekutuan");
+        negeris.add("Kedah");
+        negeris.add("Kelantan");
+        negeris.add("Melaka");
+        negeris.add("Negeri Sembilan");
+        negeris.add("Pahang");
+        negeris.add("Perak");
+        negeris.add("Perlis");
+        negeris.add("Pulau Pinang");
+        negeris.add("Sabah");
+        negeris.add("Sarawak");
+        negeris.add("Selangor");
+        negeris.add("Terengganu");
+        negeris.add("Wilayah Persekutuan");
     	
     	return negeris;
     }
@@ -173,17 +154,50 @@ public class AirView implements EntryPoint
         	lineChartYearList.setVisibleItemCount(1);
         }
         
-        
-        // LINE 78 TO 115 DOES NOT DO ANYTHING. JUST SHOWS THAT IT CAN BE CHANGED BASED ON NEGERI SELECTION
-        final String sarawakKawasan[] = {"Kapit", "Miri", "Bintulu", "Kuching", "Sibu"};
-        final String selangorKawasan[] = {"Kuala Selangor", "Shah Alam", "Banting"};
-        final String wilayahPersekutuanKawasan[] = {"Putrajaya", "Labuan"};
-        final ListBox lineChartAdditionalOptionList = new ListBox();
-        for(int i = 0; i < sarawakKawasan.length; i++)
+        final ListBox listBoxChartType = new ListBox();
+        listBoxChartType.addItem("Line Chart");
+        listBoxChartType.addItem("Bar Chart");
+        listBoxChartType.addChangeHandler(new ChangeHandler()
         {
-            lineChartAdditionalOptionList.addItem(sarawakKawasan[i]);
+			@Override
+			public void onChange(ChangeEvent event) {
+				if(!chartGenerated)
+				{
+					return;
+				}
+				
+            	if(listBoxChartType.getSelectedIndex() == 0)
+            	{
+            		apiCharts.updateChart(ChartType.LINE);
+            	}
+            	else
+            	{
+            		apiCharts.updateChart(ChartType.BAR);
+            	}
+			}
+        });
+        
+        // LINE 178 TO 259 DOES NOT DO ANYTHING. JUST SHOWS THAT KAWASAN CAN BE CHANGED BASED ON NEGERI SELECTION
+        final String kawasanJohor[] = {"Pasir Gudang", "Larkin Lama", "Muar", "Kota Tinggi"};
+        final String kawasanKedah[] = {"Langkawi", "Alor Setar", "Bakar Arang, Sg. Petani"};
+        final String kawasanKelantan[] = {"Tanah Merah ", "SMK Tanjung Chat, Kota Bharu"};
+        final String kawasanMelaka[] = {"Bukit Rambai", "Bandaraya Melaka"};
+        final String kawasanNegeriSembilan[] = {"Nilai", "Seremban", "Port Dickson"};
+        final String kawasanPahang[] = {"Jerantut", "Indera Mahkota, Kuantan", "Balok Baru, Kuantan"};
+        final String kawasanPerak[] = {"Jalan Tasek, Ipoh", "S K Jalan Pegoh, Ipoh", "Kg. Air Putih, Taiping", "Seri Manjung", "Tanjung Malim"};
+        final String kawasanPerlis[] = {"Kangar"};
+        final String kawasanPulauPinang[] = {"USM", "Perai", "Seberang Jaya 2, Perai"};
+        final String kawasanSabah[] = {"Kota Kinabalu", "Tawau", "Keningau", "Sandakan"};
+        final String kawasanSarawak[] = {"Limbang", "Samarahan", "Sri Aman", "Kapit", "Kuching", "Sibu", "Bintulu", "Miri", "ILP Miri", "Sarikei"};
+        final String kawasanSelangor[] = {"Pelabuhan Kelang", "Petaling Jaya", "Banting", "Shah Alam", "Kuala Selangor"};
+        final String kawasanTerengganu[] = {"Kemaman", "Paka", "Kuala Terengganu"};
+        final String kawasanWilayahPersekutuan[] = {"Batu Muda,Kuala Lumpur", "Cheras,Kuala Lumpur", "Putrajaya", "Labuan"};
+        final ListBox lineChartAdditionalOptionList = new ListBox();
+        for(int i = 0; i < kawasanJohor.length; i++)
+        {
+            lineChartAdditionalOptionList.addItem(kawasanJohor[i]);
         }
-        lineChartAdditionalOptionList.setVisibleItemCount(sarawakKawasan.length);
+        lineChartAdditionalOptionList.setVisibleItemCount(kawasanJohor.length);
         
         lineChartOptionList.addChangeHandler(new ChangeHandler() {
             @Override
@@ -196,13 +210,46 @@ public class AirView implements EntryPoint
                 switch(selectedNegeri)
                 {
                     case 0:
-                        kawasanList = sarawakKawasan;
+                        kawasanList = kawasanJohor;
                         break;
                     case 1:
-                        kawasanList = selangorKawasan;
+                        kawasanList = kawasanKedah;
                         break;
                     case 2:
-                        kawasanList = wilayahPersekutuanKawasan;
+                        kawasanList = kawasanKelantan;
+                        break;
+                    case 3:
+                        kawasanList = kawasanMelaka;
+                        break;
+                    case 4:
+                        kawasanList = kawasanNegeriSembilan;
+                        break;
+                    case 5:
+                        kawasanList = kawasanPahang;
+                        break;
+                    case 6:
+                        kawasanList = kawasanPerak;
+                        break;
+                    case 7:
+                        kawasanList = kawasanPerlis;
+                        break;
+                    case 8:
+                        kawasanList = kawasanPulauPinang;
+                        break;
+                    case 9:
+                        kawasanList = kawasanSabah;
+                        break;
+                    case 10:
+                        kawasanList = kawasanSarawak;
+                        break;
+                    case 11:
+                        kawasanList = kawasanSelangor;
+                        break;
+                    case 12:
+                        kawasanList = kawasanTerengganu;
+                        break;
+                    case 13:
+                        kawasanList = kawasanWilayahPersekutuan;
                         break;
                 }
                 
@@ -215,10 +262,11 @@ public class AirView implements EntryPoint
         });
 
         leftPanel.add(lblMenu);
+        leftPanel.add(listBoxChartType);
         leftPanel.add(lineChartOptionList);
         leftPanel.add(lineChartYearList);
-        //leftPanel.add(lineChartButton);
         leftPanel.add(generateLineChartButton);
+        //leftPanel.add(lineChartButton);
         //leftPanel.add(lineChartAdditionalOptionList);
 
         //mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
@@ -259,13 +307,21 @@ public class AirView implements EntryPoint
                     public void onFailure(Throwable caught)
                     {
                     	showCustomDialog(caught.getMessage());
-                        
                     }
 
                     public void onSuccess(String result)
                     {
                     	//showCustomDialog(result);
-                        apiCharts.updateLineChart(negeri, Integer.parseInt(year), parseResultNew(result));
+                    	if(listBoxChartType.getSelectedIndex() == 0)
+                    	{
+                    		apiCharts.updateChart(ChartType.LINE, negeri, Integer.parseInt(year), parseResultNew(result));
+                    	}
+                    	else
+                    	{
+                    		apiCharts.updateChart(ChartType.BAR, negeri, Integer.parseInt(year), parseResultNew(result));
+                    	}
+                    	
+                    	chartGenerated = true;
                     }
                 });
             }
@@ -280,33 +336,34 @@ public class AirView implements EntryPoint
      * Draws Custom Dialog box.
      * @return DialogBox
      */
-    private DialogBox showCustomDialog(String message) {
-
-           final DialogBox dialog = new DialogBox(false, true);
-           // final DialogBox dialog = new DialogBox(true, true);
-           // Set caption
-           dialog.setText("Data Fetch Status");
-           dialog.setWidth("300px");
+    private DialogBox showCustomDialog(String message)
+    {
+    	final DialogBox dialog = new DialogBox(false, true);
+    	// final DialogBox dialog = new DialogBox(true, true);
+    	// Set caption
+    	dialog.setText("Data Fetch Status");
+    	dialog.setWidth("300px");
            
-           // Setcontent
-           Label content = new Label(message);
+        // Setcontent
+        Label content = new Label(message);
     	
-    	
-           if (dialog.isAutoHideEnabled())  {
-    	   dialog.setWidget(content);
-           } 
-           
-           else {
-        	   	VerticalPanel vPanel = new VerticalPanel();
-        	   	vPanel.setSpacing(2);
-        	   	vPanel.add(content);
-        	   	vPanel.add(new Label("\n"));
-        	   	vPanel.add(new Button("Close", new ClickHandler() {
-        	   			public void onClick(ClickEvent event) {
-        	   				dialog.hide();
-        	   			}
-        	   	}));
-        	   	dialog.setWidget(vPanel);
+        if (dialog.isAutoHideEnabled())
+        {
+        	dialog.setWidget(content);
+    	} 
+        else {
+    	   	VerticalPanel vPanel = new VerticalPanel();
+    	   	vPanel.setSpacing(2);
+    	   	vPanel.add(content);
+    	   	vPanel.add(new Label("\n"));
+    	   	vPanel.add(new Button("Close", new ClickHandler()
+    	   	{
+    	   			public void onClick(ClickEvent event)
+    	   			{
+    	   				dialog.hide();
+    	   			}
+    	   	}));
+    	   	dialog.setWidget(vPanel);
     	}
         
     	dialog.setPopupPosition(600, 150);
