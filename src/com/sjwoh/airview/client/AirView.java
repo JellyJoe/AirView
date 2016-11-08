@@ -24,8 +24,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -35,6 +38,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sjwoh.airview.client.entity.API;
+import org.w3c.dom.Element;
 
 // Entry point classes define <code>onModuleLoad()</code>.
 public class AirView implements EntryPoint
@@ -140,15 +144,20 @@ public class AirView implements EntryPoint
     	final List<String> years = getYears();
     	
         DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
-        mainPanel.setSize("100%", "100%");
-
+        mainPanel.setSize("100%", "100%");   
+        
         VerticalPanel leftPanel = new VerticalPanel();
         leftPanel.setSize("100%", "100%");
-
-        final Label errorLabel = new Label("Any errors will show up here!");
-        errorLabel.setSize("100%", "100%");
-//        final Button lineChartButton = new Button("Line Chart Button");
+        leftPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        leftPanel.getElement().setId("left-panel");
+        
+        //Graph plotter menu title bar
+        final Label lblMenu = new Label("Graph Plotter Menu");
+        lblMenu.getElement().setId("graph-menu-txt");
+        
+        //final Button lineChartButton = new Button("Line Chart Button");
         final Button generateLineChartButton = new Button("Generate");
+        generateLineChartButton.getElement().setId("btnLine");
         
         final ListBox lineChartOptionList = new ListBox();
         for(int i = 0; i < negeris.size(); i++)
@@ -163,6 +172,7 @@ public class AirView implements EntryPoint
         	lineChartYearList.addItem(years.get(i));
         	lineChartYearList.setVisibleItemCount(1);
         }
+        
         
         // LINE 78 TO 115 DOES NOT DO ANYTHING. JUST SHOWS THAT IT CAN BE CHANGED BASED ON NEGERI SELECTION
         final String sarawakKawasan[] = {"Kapit", "Miri", "Bintulu", "Kuching", "Sibu"};
@@ -204,16 +214,16 @@ public class AirView implements EntryPoint
             }
         });
 
-        leftPanel.add(errorLabel);
+        leftPanel.add(lblMenu);
         leftPanel.add(lineChartOptionList);
         leftPanel.add(lineChartYearList);
-//        leftPanel.add(lineChartButton);
+        //leftPanel.add(lineChartButton);
         leftPanel.add(generateLineChartButton);
-        leftPanel.add(lineChartAdditionalOptionList);
+        //leftPanel.add(lineChartAdditionalOptionList);
 
-//        mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
+        //mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
         mainPanel.addWest(leftPanel, 150);
-        mainPanel.add(apiCharts.getDockLayoutPanel());
+        mainPanel.add(apiCharts.getDockLayoutPanel()); 
 
         // creates and sets the line chart button handler
 //        class LineChartHandler implements ClickHandler
@@ -248,12 +258,13 @@ public class AirView implements EntryPoint
                 {
                     public void onFailure(Throwable caught)
                     {
-                        errorLabel.setText(caught.getMessage());
+                    	showCustomDialog(caught.getMessage());
+                        
                     }
 
                     public void onSuccess(String result)
                     {
-                    	errorLabel.setText(result);
+                    	//showCustomDialog(result);
                         apiCharts.updateLineChart(negeri, Integer.parseInt(year), parseResultNew(result));
                     }
                 });
@@ -263,6 +274,45 @@ public class AirView implements EntryPoint
         generateLineChartButton.addClickHandler(lineChartHandler);
 
         return mainPanel;
+    }
+    
+    /**
+     * Draws Custom Dialog box.
+     * @return DialogBox
+     */
+    private DialogBox showCustomDialog(String message) {
+
+           final DialogBox dialog = new DialogBox(false, true);
+           // final DialogBox dialog = new DialogBox(true, true);
+           // Set caption
+           dialog.setText("Data Fetch Status");
+           dialog.setWidth("300px");
+           
+           // Setcontent
+           Label content = new Label(message);
+    	
+    	
+           if (dialog.isAutoHideEnabled())  {
+    	   dialog.setWidget(content);
+           } 
+           
+           else {
+        	   	VerticalPanel vPanel = new VerticalPanel();
+        	   	vPanel.setSpacing(2);
+        	   	vPanel.add(content);
+        	   	vPanel.add(new Label("\n"));
+        	   	vPanel.add(new Button("Close", new ClickHandler() {
+        	   			public void onClick(ClickEvent event) {
+        	   				dialog.hide();
+        	   			}
+        	   	}));
+        	   	dialog.setWidget(vPanel);
+    	}
+        
+    	dialog.setPopupPosition(600, 150);
+    	dialog.show();
+    	
+    	return dialog;
     }
 
     private Set<API> parseResultNew(String result)

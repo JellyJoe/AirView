@@ -54,7 +54,6 @@ public class APICharts
                 getDockLayoutPanel().addNorth(getDashboard(), 0);
                 getDockLayoutPanel().addWest(getCategoryFilter(), 150);
                 getDockLayoutPanel().add(getSimpleLayoutPanel());
-                getSimpleLayoutPanel().setWidget(new Label("Click on the button on the side bar for some chart action!"));
             }
         });
     }
@@ -110,6 +109,7 @@ public class APICharts
         if (categoryFilter == null)
         {
             categoryFilter = new CategoryFilter();
+            
         }
         return categoryFilter;
     }
