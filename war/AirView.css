@@ -75,12 +75,30 @@ img{
 
 #legend-img
 {
-position: absolute;
-z-index: 10;
-top: 30px;
-right:0;
+	position: absolute;
+	z-index: 10;
+	top: 30px;
+	right:0;
 }
 
+#legend-img-horizontal-overlay
+{
+	position: absolute;
+	z-index: 0;
+	bottom: 0px;
+	left: -330px;
+	height: 80px;
+	background-color: white;
+}
+
+#legend-img-horizontal
+{
+	position: absolute;
+	z-index: 10;
+	bottom: 0px;
+	left: 150px;
+	height: 80px;
+}
 
 
 #left-panel{

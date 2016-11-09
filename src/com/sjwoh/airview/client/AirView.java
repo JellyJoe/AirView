@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartType;
 import com.sjwoh.airview.client.entity.API;
@@ -45,6 +46,7 @@ public class AirView implements EntryPoint
     private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
     private boolean chartGenerated = false;
+    private boolean legendHidden = false;
 
     APICharts apiCharts = new APICharts();
 
@@ -60,6 +62,7 @@ public class AirView implements EntryPoint
     	RootPanel.get("graph-chart").add(mainPanel);
     	RootPanel.get("map").setVisible(true);
 		RootPanel.get("graph-chart").setVisible(false);
+		RootPanel.get("legend-img-horizontal").setVisible(false);
 
     	//Link the HTML map-link to onclickhandler
     	Anchor.wrap(DOM.getElementById("map-link")).addClickHandler(new ClickHandler() {
@@ -67,6 +70,7 @@ public class AirView implements EntryPoint
 			public void onClick(ClickEvent event) {
 				RootPanel.get("map").setVisible(true);
 				RootPanel.get("graph-chart").setVisible(false);
+				RootPanel.get("legend-img-horizontal").setVisible(false);
 			}
     	});
 
@@ -76,6 +80,14 @@ public class AirView implements EntryPoint
 			public void onClick(ClickEvent event) {
 				RootPanel.get("map").setVisible(false);
 				RootPanel.get("graph-chart").setVisible(true);
+				if(!legendHidden)
+				{
+					RootPanel.get("legend-img-horizontal").setVisible(true);
+				}
+				else
+				{
+					RootPanel.get("legend-img-horizontal").setVisible(false);
+				}
 			}
     	});
     }
@@ -139,6 +151,25 @@ public class AirView implements EntryPoint
         //final Button lineChartButton = new Button("Line Chart Button");
         final Button generateLineChartButton = new Button("Generate");
         generateLineChartButton.getElement().setId("btnLine");
+        
+        final ToggleButton toggleButton = new ToggleButton("Display API Legend", "Hide API Legend");
+        toggleButton.getElement().setId("btnLine");
+        toggleButton.setDown(true);
+        toggleButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if(toggleButton.isDown())
+				{
+					RootPanel.get("legend-img-horizontal").setVisible(true);
+				}
+				else
+				{
+					RootPanel.get("legend-img-horizontal").setVisible(false);
+				}
+				
+				legendHidden = !legendHidden;
+			}
+        });
 
         final ListBox lineChartOptionList = new ListBox();
         for(int i = 0; i < negeris.size(); i++)
@@ -266,10 +297,9 @@ public class AirView implements EntryPoint
         leftPanel.add(lineChartOptionList);
         leftPanel.add(lineChartYearList);
         leftPanel.add(generateLineChartButton);
+        leftPanel.add(toggleButton);
         //leftPanel.add(lineChartButton);
         //leftPanel.add(lineChartAdditionalOptionList);
-        
-        
 
         //mainPanel.addNorth(new HTML("<h1>AirView</h1>"), 100);
         mainPanel.addWest(leftPanel, 150);
